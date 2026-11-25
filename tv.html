@@ -83,6 +83,15 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #pkT{display:inline-block;font-size:clamp(13px,1.8vh,24px);margin-top:14px;padding:4px 12px;border-radius:999px;background:rgba(13,42,34,.08);color:rgba(13,42,34,.7)}
 #plist{position:fixed;right:1.2vw;top:calc(1.2vh + 52px);bottom:3vh;width:min(320px,40vw);z-index:9;background:rgba(13,42,34,.94);backdrop-filter:blur(6px);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 40px rgba(0,0,0,.45)}
 #plist[hidden]{display:none}
+#wonReset{align-self:flex-start;font-size:12px;color:var(--soft);text-decoration:underline;opacity:.75}
+#plGrid button.won{box-shadow:inset 0 0 0 2px var(--gold)}#plGrid button.won i::after{content:" · 당첨";color:var(--gold)}
+#peek{overflow:hidden}
+#pkWin{display:none;width:max-content;margin:0 auto 10px;padding:.3em 1.1em;border-radius:999px;background:var(--gold);color:var(--deep);font-weight:700;font-size:clamp(15px,2.2vh,30px)}
+#peek.win #pkWin{display:block;animation:pkin .55s cubic-bezier(.2,1.6,.4,1)}
+#peek.spin #pkM,#peek.spin #pkT{visibility:hidden}
+#peek.spin #pkN{opacity:.75}
+.cf{position:absolute;top:-5vh;width:clamp(8px,1vh,16px);height:clamp(12px,1.6vh,26px);border-radius:2px;pointer-events:none;animation:cf linear forwards}
+@keyframes cf{to{transform:translate(var(--dx),115vh) rotate(var(--r))}}
 #plist>b{font-weight:400;color:var(--gold)}#plist small{color:var(--soft);font-size:12px;margin-left:6px}
 #plGrid{overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;align-content:start}
 #plGrid button{background:rgba(251,243,226,.06);border-radius:12px;padding:6px 4px;display:grid;justify-items:center;gap:2px;font-size:12px;color:var(--ink);min-width:0}
@@ -161,6 +170,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
     <button class="btn" id="fs">전체화면</button>
     <button class="btn ghost" id="testBtn">테스트 장식</button>
     <button class="btn ghost" id="peekBtn" hidden>그림 보기</button>
+    <button class="btn ghost" id="rafBtn" hidden>추첨</button>
     <button class="btn ghost" id="loginBtn" hidden>관리자 로그인</button>
     <button class="btn ghost" id="modBtn" hidden>그림 정리</button>
   </div>
@@ -209,8 +219,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 <canvas id="pfx"></canvas>
 <div id="beam"></div>
 <div id="login"><form id="loginForm"><b>관리자 로그인</b><input id="lgEmail" type="email" autocomplete="username" placeholder="관리자 이메일"><input id="lgPw" type="password" autocomplete="current-password" placeholder="비밀번호"><p id="lgMsg"></p><div style="display:flex;gap:8px"><button class="btn" type="submit">로그인</button><button class="btn ghost" type="button" id="lgCancel">취소</button></div></form></div>
-<div id="plist" hidden><b>그림 목록<small id="plHint">눌러서 크게 보기</small></b><div id="plGrid"></div></div>
-<div id="peek"><div class="pk" role="dialog" aria-label="그림 자세히 보기"><button id="pkX" aria-label="닫기">×</button><div id="pkArt"></div><div id="pkN"></div><div id="pkM"></div><div id="pkT"></div></div></div>
+<div id="plist" hidden><b>그림 목록<small id="plHint">눌러서 크게 보기</small></b><button id="wonReset" hidden>당첨 기록 지우기</button><div id="plGrid"></div></div>
+<div id="peek"><div class="pk" role="dialog" aria-label="그림 자세히 보기"><button id="pkX" aria-label="닫기">×</button><div id="pkWin">🎉 당첨을 축하해요!</div><div id="pkArt"></div><div id="pkN"></div><div id="pkM"></div><div id="pkT"></div></div></div>
 <div id="modbar"><span>이 그림을 스크린에서 내릴까요?</span><button class="btn" id="modYes" style="min-height:40px">내리기</button><button class="btn ghost" id="modNo" style="min-height:40px">취소</button></div>
 
 <script src="qr.min.js"></script>
@@ -670,7 +680,7 @@ function drawQr() {
 }
 function startWall() {
   if (started) return; started = true; drawQr();
-  if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; document.body.classList.add("adm"); }
+  if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; $("#rafBtn").hidden = false; document.body.classList.add("adm"); }
   stream(); watchSpot(); setTimeout(prune, 5000);
 }
 async function login(email, pw) {
@@ -704,10 +714,11 @@ function setMod(on) { mod = on; field.classList.toggle("mod", on); $("#modBtn").
 const sortedEntries = () => [...store.values()].sort((a, b) => a.at - b.at);
 function renderList() {
   const g = $("#plGrid"), all = sortedEntries(); g.textContent = "";
+  $("#wonReset").hidden = !getWon().length;
   $("#plHint").textContent = isAdmin ? "누르면 TV에도 크게 떠요" : "눌러서 크게 보기 · TV에 띄우려면 관리자 로그인";
   if (!all.length) { const p = document.createElement("p"); p.textContent = "아직 올라온 그림이 없어요"; g.appendChild(p); return; }
   all.forEach((it, i) => {
-    const b = document.createElement("button"); b.dataset.id = it.id; if (it.id === cardId) b.className = "cur";
+    const b = document.createElement("button"); b.dataset.id = it.id; if (it.id === cardId) b.className = "cur"; if (wonIds().has(it.id)) b.classList.add("won");
     const num = document.createElement("i"); num.textContent = (i + 1) + "번째";
     const nm = document.createElement("span"); nm.textContent = it.n || "익명의 산타";
     let th = thumbs.get(it.id); if (!th) { th = cv(it, 56); thumbs.set(it.id, th); }
@@ -722,33 +733,80 @@ function showCard(it) {
   $("#pkM").textContent = it.m ? String(it.m).slice(0, 40) : "";
   const when = it.at ? new Date(+it.at).toLocaleTimeString("ko-KR", { hour: "numeric", minute: "2-digit" }) : "";
   $("#pkT").textContent = it.test ? "테스트 장식" : [idx >= 0 ? (idx + 1) + "번째 마음" : "", when].filter(Boolean).join(" · ");
-  $("#peek").classList.add("on"); $("#pkX").focus();
+  $("#peek").classList.add("on");
   for (const b of document.querySelectorAll("#plGrid button")) b.classList.toggle("cur", b.dataset.id === it.id);
 }
 let bt = 0; const flash = t => { banner(t); clearTimeout(bt); bt = setTimeout(() => banner(""), 4000); };
-async function sendSpot(id) {
+async function sendSpot(id, raffle) {
   try {
-    const r = await fetch(DB_URL + "/spot.json?auth=" + encodeURIComponent(idToken), { method: "PUT", body: JSON.stringify(id ? { id, at: { ".sv": "timestamp" } } : null) });
+    const r = await fetch(DB_URL + "/spot.json?auth=" + encodeURIComponent(idToken), { method: "PUT", body: JSON.stringify(id ? Object.assign({ id, at: { ".sv": "timestamp" } }, raffle ? { raffle: true } : {}) : null) });
     if (!r.ok) flash("TV에 띄우지 못했어요. 관리자 로그인을 다시 해 주세요");
   } catch (_) { flash("TV에 띄우지 못했어요. 연결을 확인해 주세요"); }
 }
 function pickEntry(it) {
-  showCard(it);
+  rafTok++; $("#peek").classList.remove("spin", "win"); showCard(it);
   if (isAdmin && !it.test) { spotMine = true; sendSpot(it.id); }
 }
 function openPeek(o) { pickEntry(o.it); }
 function closePeek() {
-  $("#peek").classList.remove("on"); cardId = "";
+  rafTok++; $("#peek").classList.remove("on", "spin", "win"); cardId = "";
   for (const b of document.querySelectorAll("#plGrid button.cur")) b.classList.remove("cur");
   if (spotMine && isAdmin) { spotMine = false; sendSpot(null); }
 }
-let spotId = "", pendSpot = "";
+let spotId = "", spotKey = "", pendSpot = "", spotSeen = false;
 function onSpot(v) {
-  const id = v && typeof v.id === "string" ? v.id : "";
-  if (id === spotId) return; spotId = id;
-  if (id) { if (Date.now() - (+v.at || 0) > 30 * 60000) return; const it = store.get(id); if (it) showCard(it); else pendSpot = id; }
-  else if (!spotMine) { $("#peek").classList.remove("on"); cardId = ""; }
+  const id = v && typeof v.id === "string" ? v.id : "", key = id + ":" + (v && v.at), initial = !spotSeen; spotSeen = true;
+  if (key === spotKey) return; spotKey = key; spotId = id;
+  if (id) {
+    if (Date.now() - (+v.at || 0) > 30 * 60000) return; const it = store.get(id);
+    if (!it) pendSpot = id;
+    else if (v.raffle && !initial) playRaffle(it);
+    else { rafTok++; $("#peek").classList.remove("spin"); $("#peek").classList.toggle("win", !!v.raffle); showCard(it); }
+  }
+  else if (!spotMine) { rafTok++; $("#peek").classList.remove("on", "spin", "win"); cardId = ""; }
 }
+/* ---------- 추첨: DB 전체 그림에서, 이름 적은 사람만, 사람마다 한 번, 이미 당첨된 이름 제외 ---------- */
+const norm = s => String(s || "").replace(/\s+/g, "").toLowerCase();
+const getWon = () => { try { return JSON.parse(localStorage.getItem("mtron-winners") || "[]"); } catch (_) { return []; } };
+const setWon = a => { try { localStorage.setItem("mtron-winners", JSON.stringify(a)); } catch (_) {} };
+const wonIds = () => new Set(getWon().map(w => w.id));
+function rafflePool() {
+  const won = new Set(getWon().map(w => norm(w.n))), by = new Map();
+  for (const e of store.values()) { if (e.test) continue; const k = norm(e.n); if (!k || won.has(k)) continue; if (!by.has(k)) by.set(k, []); by.get(k).push(e); }
+  return [...by.values()];
+}
+let rafTok = 0;
+function confetti() {
+  const pk = $("#peek"), COLS = ["#e9c675", "#fbf3e2", "#c8364a", "#9bbf95", "#e88aa0", "#e2b24a"];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement("i"); c.className = "cf";
+    c.style.left = rnd(0, 100) + "%"; c.style.background = pick(COLS);
+    c.style.setProperty("--dx", rnd(-18, 18) + "vw"); c.style.setProperty("--r", rnd(360, 1440) + "deg");
+    c.style.animationDuration = rnd(2.4, 4.6) + "s"; c.style.animationDelay = rnd(0, .7) + "s";
+    pk.appendChild(c); setTimeout(() => c.remove(), 5600);
+  }
+}
+function playRaffle(it) {
+  const tok = ++rafTok, pk = $("#peek"); pk.classList.remove("win"); pk.classList.add("spin");
+  const cands = [...store.values()].filter(e => e.n && !e.test); if (!cands.length) cands.push(it);
+  let d = 55, t = 0;
+  const tick = () => {
+    if (tok !== rafTok) return;
+    if (t < 4200) { showCard(cands[Math.random() * cands.length | 0]); t += d; d *= 1.11; setTimeout(tick, d); return; }
+    pk.classList.remove("spin"); showCard(it); pk.classList.add("win"); confetti();
+  };
+  tick();
+}
+$("#rafBtn").onclick = () => {
+  const pool = rafflePool();
+  if (!pool.length) { flash("추첨할 사람이 없어요. 이름을 적은 그림만 추첨해요"); return; }
+  const g = pool[Math.random() * pool.length | 0], w = g[Math.random() * g.length | 0];
+  setMod(false); const won = getWon(); won.push({ id: w.id, n: w.n, at: Date.now() }); setWon(won);
+  if (isAdmin) { spotMine = true; sendSpot(w.id, true); }
+  else { playRaffle(w); flash("관리자 로그인을 하면 TV에도 추첨 화면이 떠요"); }
+  if (peek) renderList();
+};
+$("#wonReset").onclick = () => { if (confirm("당첨 기록을 지울까요? 지우면 이전 당첨자도 다시 뽑힐 수 있어요.")) { setWon([]); renderList(); } };
 function watchSpot() {
   const get = async () => { try { const r = await fetch(DB_URL + "/spot.json", { cache: "no-store" }); if (r.ok) onSpot(await r.json()); } catch (_) {} };
   const poll = () => { get(); setTimeout(poll, 3000); };
