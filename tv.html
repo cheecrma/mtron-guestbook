@@ -37,10 +37,10 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 .bulb{animation:tw 3.2s ease-in-out infinite}
 .bulb ellipse{filter:drop-shadow(0 0 7px var(--c))}
 @keyframes tw{50%{opacity:.4}}
-#whead{position:absolute;left:50%;top:max(9vh,70px);transform:translateX(-50%);text-align:center;z-index:2;white-space:nowrap;pointer-events:none}
-#whead .ev{font-size:clamp(15px,2.3vh,36px)}
-#whead .mc{font-size:clamp(64px,13.5vh,230px);margin:-.24em -.4em -.28em}
-#whead .guide{font-size:clamp(15px,2.2vh,34px);color:var(--ink);opacity:.92}
+#whead{position:absolute;left:50%;top:max(4.5vh,30px);transform:translateX(-50%);text-align:center;z-index:2;white-space:nowrap;pointer-events:none}
+#whead .ev{font-size:clamp(12px,1.6vh,26px);letter-spacing:.04em}
+#whead .mc{font-size:clamp(44px,8.6vh,150px);margin:-.26em -.4em -.3em}
+#whead .guide{font-size:clamp(12px,1.6vh,24px);color:var(--soft);opacity:.85;letter-spacing:.02em}
 #whead .guide b{color:var(--gold);font-weight:400}
 #field{position:absolute;inset:0;z-index:3}
 .it{position:absolute;left:0;top:0;transform-origin:50% 50%;will-change:transform;transition:opacity .9s}
@@ -54,10 +54,11 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #cap b{display:block;font:400 clamp(30px,5.4vh,84px)/1.05 "Nanum Pen Script",cursive;color:var(--gold)}
 #cap span{display:block;font-size:clamp(15px,2.4vh,36px);color:var(--ink)}
 #cap span:empty{display:none}
-.qr{position:absolute;right:2.4vw;bottom:3.6vh;z-index:6;background:var(--ink);color:var(--deep);border-radius:22px;padding:12px 12px 10px;text-align:center;font-weight:700;font-size:clamp(13px,1.7vh,26px);line-height:1.3;animation:glow 2.6s ease-in-out infinite}
+.qr{position:absolute;right:2vw;bottom:3vh;z-index:6;display:flex;flex-direction:column;align-items:center;gap:.55em;padding:10px 10px 9px;border-radius:18px;background:rgba(13,42,34,.5);backdrop-filter:blur(8px);box-shadow:inset 0 0 0 1px rgba(233,198,117,.28),0 14px 32px rgba(0,0,0,.35);color:var(--soft);font-size:clamp(11px,1.3vh,19px);letter-spacing:.06em;line-height:1}
 @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(233,198,117,.55),0 16px 34px rgba(0,0,0,.4)}50%{box-shadow:0 0 0 14px rgba(233,198,117,0),0 16px 34px rgba(0,0,0,.4)}}
-#qrBox{width:clamp(110px,16vh,290px);height:clamp(110px,16vh,290px);display:grid;place-items:center;margin-bottom:8px;font-weight:400;font-size:12px}
-#qrBox img,#qrBox svg{width:100%;height:100%;display:block;border-radius:6px}
+#qrBox{width:clamp(88px,12vh,190px);height:clamp(88px,12vh,190px);display:grid;place-items:center;padding:5px;border-radius:10px;background:#fbf3e2;font-size:12px}
+#qrBox img,#qrBox svg{width:100%;height:100%;display:block}
+.qr b{font-weight:400;color:var(--gold)}
 .count{position:absolute;left:2.4vw;bottom:3.6vh;z-index:6;font-size:clamp(14px,2vh,30px);color:var(--soft);pointer-events:none}
 .count b{font:400 clamp(34px,5.4vh,84px)/1 "Great Vibes",cursive;color:var(--gold);margin-right:.25em}
 #wstat{position:absolute;left:50%;top:62%;transform:translateX(-50%);z-index:5;color:var(--soft);font-size:clamp(16px,2.6vh,38px);text-align:center;pointer-events:none;animation:breathe 3s ease-in-out infinite}
@@ -66,7 +67,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 .wbar:hover,.wbar:focus-within{opacity:1}
 .wbar .btn{min-height:40px;font-size:14px;padding:0 16px;white-space:nowrap}
 [hidden]{display:none!important}
-@media (max-width:700px){.wbar{left:2vw;right:2vw;flex-wrap:wrap;justify-content:flex-end;gap:6px}.wbar .btn{min-height:36px;font-size:13px;padding:0 12px}#whead .mc{font-size:min(clamp(64px,13.5vh,230px),15vw)}}
+@media (max-width:700px){.wbar{left:2vw;right:2vw;flex-wrap:wrap;justify-content:flex-end;gap:6px}.wbar .btn{min-height:36px;font-size:13px;padding:0 12px}#whead .mc{font-size:min(clamp(44px,8.6vh,150px),13vw)}}
 #modbar{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%);background:var(--deep);border-radius:999px;padding:8px 8px 8px 20px;display:none;gap:8px;align-items:center;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #modbar.on{display:flex}
 .adm .wbar{opacity:.55}
@@ -137,7 +138,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #beam{position:fixed;left:50%;top:-140px;width:140vw;height:300px;transform:translateX(-50%);background:radial-gradient(50% 50% at 50% 50%,rgba(255,240,200,.9),rgba(233,198,117,.35) 40%,transparent 70%);opacity:0;z-index:41;pointer-events:none}
 #beam.on{animation:beam 1.1s ease-out}
 @keyframes beam{30%{opacity:1}100%{opacity:0}}
-@media(prefers-reduced-motion:reduce){.mc,.bulb,.qr,#wstat{animation:none}}
+@media(prefers-reduced-motion:reduce){.mc,.qr,#wstat{animation:none}}
 </style>
 </head>
 <body>
@@ -145,7 +146,6 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 
 <section id="wall" class="view">
   <canvas id="snowBack" class="full"></canvas>
-  <svg id="garland" aria-hidden="true"></svg>
   <header id="whead">
     <p class="ev">LS엠트론 2026 CIO × CTO 송년회 방명록</p>
     <h1 class="mc">Merry Cheersmas</h1>
@@ -155,8 +155,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
   <canvas id="fx" class="full"></canvas>
   <div id="cap"><b></b><span></span></div>
   <div id="wstat">첫 번째 장식을 기다리고 있어요</div>
-  <div class="count"><b id="cnt">0</b>개의 마음이 모였어요</div>
-  <div class="qr"><div id="qrBox"><img src="qr.svg" alt="방명록 QR"></div>찍고 꾸며서<br>스크린으로 보내기</div>
+  <div class="count" hidden><b id="cnt">0</b>개의 마음이 모였어요</div>
+  <div class="qr"><div id="qrBox"><img src="qr.svg" alt="방명록 QR"></div><span><b>QR</b>로 참여하기</span></div>
   <div class="wbar">
     <button class="btn" id="fs">전체화면</button>
     <button class="btn ghost" id="testBtn">테스트 장식</button>
@@ -423,10 +423,10 @@ const active = () => [...live.values()].filter(o => o.state !== "leaving");
 let lastWH = "";
 function resizeWall() {
   W = wall.clientWidth; H = wall.clientHeight; if (!W || !H) return;
-  if (lastWH !== W + "x" + H) { lastWH = W + "x" + H; back.resize(); front.resize(); buildGarland(); } /* 새 그림이 들어와도 눈과 전구는 끊기지 않게 */
+  if (lastWH !== W + "x" + H) { lastWH = W + "x" + H; back.resize(); front.resize(); } /* 새 그림이 들어와도 눈이 끊기지 않게 */
   const wr = wall.getBoundingClientRect(), rel = (el, m) => { const r = el.getBoundingClientRect(); return { x1: r.left - wr.left - m, y1: r.top - wr.top - m, x2: r.right - wr.left + m, y2: r.bottom - wr.top + m }; };
   const hd = rel($("#whead"), 16); hd.y1 = -999; hb = hd.y2;
-  obs = [hd, rel($(".qr"), 14), rel($(".count"), 10)];
+  obs = [hd, rel($(".qr"), 14)];
   cy = hb + (H - hb) * .5;
   const n = Math.max(active().length, 14), free = W * (H - hb * .5);
   const ns = Math.round(Math.min(280, Math.max(80, Math.sqrt(free / n) * .6)) / 10) * 10;
@@ -533,10 +533,26 @@ async function drop(o, busy) {
   await anim(1500, p => { const e = p < .5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2; o.k = 1 - (1 - S / B) * e; o.x = x0 + (tx - x0) * e; o.y = y0 + (ty - y0) * e; o.rot = r0 + (o.r0 - r0) * e; place(o); });
   o.state = "live"; o.rot = o.rot - o.r0; o.k = 1; setCanvas(o, S); const a = rnd(0, 6.28); o.vx = Math.cos(a) * 12; o.vy = Math.sin(a) * 12; place(o);
 }
+function burstExcess() { /* 한꺼번에 몰리면: 최신 3개만 큰 연출, 나머지는 바로 제자리에서 빠르게 뿅 */
+  if (queue.length <= 6) return;
+  let extra = queue.splice(0, queue.length - 3).map(id => live.get(id)).filter(o => o && o.state === "pending");
+  const skip = extra.length - 30; if (skip > 0) { extra.slice(0, skip).forEach(o => { o.el.remove(); live.delete(o.id); }); extra = extra.slice(skip); }
+  extra.forEach((o, i) => setTimeout(() => quickPop(o), i * 220));
+}
 async function play() {
-  if (playing) return; playing = true;
-  while (queue.length) { const o = live.get(queue.shift()); if (!o || o.state !== "pending") continue; trim(); await drop(o, queue.length); await wait(300); }
+  burstExcess(); if (playing) return; playing = true;
+  while (queue.length) {
+    const o = live.get(queue.shift()); if (!o || o.state !== "pending") continue; trim(); await drop(o, queue.length); await wait(300); burstExcess();
+  }
   playing = false;
+}
+async function quickPop(o) {
+  if (!o || o.state !== "pending" || !live.has(o.id)) return;
+  const S = size || 140; setCanvas(o, S); o.el.classList.remove("pending");
+  [o.x, o.y] = pickSpot(S / 2); o.state = "pop"; o.k = .01; o.rot = 0; o.vx = o.vy = 0; o.el.style.opacity = 1; place(o);
+  fx.ring(o.x, o.y, S * .3); fx.burst(o.x, o.y, S * .3, 18); updStat();
+  await anim(700, p => { o.k = .01 + .99 * (1 - Math.exp(-6 * p) * Math.cos(p * Math.PI * 3.2)); place(o); });
+  o.k = 1; o.state = "live"; const a = rnd(0, 6.28); o.vx = Math.cos(a) * 10; o.vy = Math.sin(a) * 10; place(o); trim();
 }
 function physics(dt) {
   const arr = [...live.values()], solid = arr.filter(o => o.state === "live" || o.state === "drop"), max = reduce ? 3 : 15;
@@ -575,7 +591,7 @@ function toEntry(k, v) {
 async function pull() {
   try {
     let q = "orderBy=" + encodeURIComponent('"$key"');
-    q += lastKey ? "&startAt=" + encodeURIComponent(JSON.stringify(lastKey)) + "&limitToFirst=200" : "&limitToLast=300";
+    q += lastKey ? "&startAt=" + encodeURIComponent(JSON.stringify(lastKey)) + "&limitToFirst=200" : "&limitToLast=1000";
     const r = await fetch(DB_URL + "/entries.json?" + q, { cache: "no-store" });
     if (!r.ok) throw new Error("status " + r.status);
     const j = (await r.json()) || {};
@@ -618,7 +634,7 @@ function addEntries(obj) {
 function streamOk() { if (fails >= 3) banner(""); fails = 0; }
 function stream() {
   if (!window.EventSource) return startPolling();
-  try { es = new EventSource(DB_URL + "/entries.json?orderBy=" + encodeURIComponent('"$key"') + "&limitToLast=300"); }
+  try { es = new EventSource(DB_URL + "/entries.json?orderBy=" + encodeURIComponent('"$key"') + "&limitToLast=1000"); }
   catch (_) { return startPolling(); }
   const guard = setTimeout(() => { if (!gotStream) { es.close(); startPolling(); } }, 10000);
   const onData = ev => {
@@ -679,7 +695,7 @@ $("#testBtn").onclick = () => {
 $("#fs").onclick = () => { const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); };
 /* ---------- 관리자: 그림 보기(누가 썼는지 확인) ---------- */
 /* 관리자(로그인)가 고른 그림은 DB의 /spot 에 적히고, 이 주소를 연 모든 화면(TV 포함)이 같은 카드를 크게 띄움 */
-let peek = false, cardId = "", spotMine = false;
+let peek = false, cardId = "", spotMine = false; const thumbs = new Map();
 function setPeek(on) {
   peek = on; field.classList.toggle("peek", on); $("#peekBtn").textContent = on ? "그림 보기 끝내기" : "그림 보기";
   $("#plist").hidden = !on; if (on) renderList(); else if (spotMine) closePeek();
@@ -694,7 +710,8 @@ function renderList() {
     const b = document.createElement("button"); b.dataset.id = it.id; if (it.id === cardId) b.className = "cur";
     const num = document.createElement("i"); num.textContent = (i + 1) + "번째";
     const nm = document.createElement("span"); nm.textContent = it.n || "익명의 산타";
-    b.append(cv(it, 56), nm, num); b.onclick = () => pickEntry(it); g.prepend(b);
+    let th = thumbs.get(it.id); if (!th) { th = cv(it, 56); thumbs.set(it.id, th); }
+    b.append(th, nm, num); b.onclick = () => pickEntry(it); g.prepend(b);
   });
 }
 function showCard(it) {
