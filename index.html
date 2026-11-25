@@ -9,7 +9,7 @@
 <style>
 /* VOICE: 연말 송년회 로비의 따뜻하고 반짝이는 밤
    IDEA: 큰 TV가 눈 내리는 크리스마스 창문이 되고, 폰에서 꾸민 장식이 하늘로 빨려 올라가 그 창문 위로 내려옴
-   PICTURE: 전구 가랜드 아래 금빛 Merry Christmas, 그 밑을 둥실둥실 떠다니는 트랙터, 사출기, 커넥터 장식들
+   PICTURE: 전구 가랜드 아래 금빛 Merry Cheersmas, 그 밑을 둥실둥실 떠다니는 트랙터, 사출기, 커넥터 장식들
    COLOUR and TYPE: 딥그린 밤하늘, 크랜베리, 머스터드, 세이지, 핑크, 금빛 글씨. Great Vibes 필기체 + 고운돋움, 이름은 나눔펜
    LAYOUT: 기본 화면은 TV 스크린(가로, 세로 모두 대응), #draw는 폰 한 컬럼 */
 :root{color-scheme:dark;--bg:#143a30;--deep:#0d2a22;--ink:#fbf3e2;--soft:#cfe0d4;--gold:#e9c675;--red:#c8364a;--mus:#e2b24a;--sage:#9bbf95;--pink:#e88aa0;--line:rgba(251,243,226,.16)}
@@ -20,7 +20,7 @@ h1,h2,p{margin:0}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--mus);outline-offset:2px}
 .view{display:none}.view.on{display:block}
-.mc{font-family:"Great Vibes",cursive;font-weight:400;line-height:1;background:linear-gradient(100deg,#d9ac55 15%,#fff4d6 35%,#e9c675 50%,#fff4d6 65%,#d9ac55 85%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 24px rgba(233,198,117,.35));animation:shine 7s linear infinite;padding:0 .15em}
+.mc{font-family:"Great Vibes",cursive;font-weight:400;line-height:1;background:linear-gradient(100deg,#d9ac55 15%,#fff4d6 35%,#e9c675 50%,#fff4d6 65%,#d9ac55 85%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 24px rgba(233,198,117,.35));animation:shine 7s linear infinite;padding:.3em .4em}
 @keyframes shine{to{background-position:-250% 0}}
 .ev{display:inline-flex;align-items:center;gap:.8em;color:var(--soft)}
 .ev::before,.ev::after{content:"";width:2.6em;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
@@ -39,7 +39,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 @keyframes tw{50%{opacity:.4}}
 #whead{position:absolute;left:50%;top:max(9vh,70px);transform:translateX(-50%);text-align:center;z-index:2;white-space:nowrap;pointer-events:none}
 #whead .ev{font-size:clamp(15px,2.3vh,36px)}
-#whead .mc{font-size:clamp(64px,13.5vh,230px);margin:.06em 0 .02em}
+#whead .mc{font-size:clamp(64px,13.5vh,230px);margin:-.24em -.4em -.28em}
 #whead .guide{font-size:clamp(15px,2.2vh,34px);color:var(--ink);opacity:.92}
 #whead .guide b{color:var(--gold);font-weight:400}
 #field{position:absolute;inset:0;z-index:3}
@@ -75,7 +75,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 .dwrap{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:22px 16px 48px}
 .dh{text-align:center;margin-bottom:14px}
 .dh .ev{font-size:12.5px}
-.dh .mc{font-size:clamp(40px,13vw,58px);margin:6px 0 2px;white-space:nowrap}
+.dh .mc{font-size:clamp(40px,12vw,58px);margin:calc(6px - .3em) -.4em calc(2px - .3em);white-space:nowrap}
 .dh .note{font-size:14px;color:var(--soft)}
 .lbl{font-size:13px;color:var(--soft);margin:14px 0 6px}
 .tpls{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x mandatory;scrollbar-width:none}
@@ -102,7 +102,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #send{width:100%;margin-top:20px;font-size:17px;min-height:56px;background:linear-gradient(180deg,#f3d78f,#d9ac55);color:#2a1d05;box-shadow:0 10px 26px rgba(217,172,85,.35)}
 #dmsg{min-height:22px;margin-top:10px;text-align:center;font-size:14px;color:var(--mus)}
 #done{text-align:center;padding:16vh 10px 40px}
-#done .mc{font-size:60px;margin-bottom:14px}
+#done .mc{font-size:60px;margin:-.3em -.4em calc(14px - .3em)}
 #done h2{font-size:24px;margin-bottom:6px}
 #done p{color:var(--soft);margin-bottom:28px}
 #done>*{animation:rise .7s both}#done>*:nth-child(2){animation-delay:.1s}#done>*:nth-child(3){animation-delay:.2s}#done>*:nth-child(4){animation-delay:.3s}
@@ -122,7 +122,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
   <svg id="garland" aria-hidden="true"></svg>
   <header id="whead">
     <p class="ev">LS엠트론 2026 CIO × CTO 송년회 방명록</p>
-    <h1 class="mc">Merry Christmas</h1>
+    <h1 class="mc">Merry Cheersmas</h1>
     <p class="guide">우측 하단 <b>QR</b>을 찍고 장식을 꾸며 남겨 주세요</p>
   </header>
   <div id="field"></div>
@@ -144,7 +144,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
     <div id="drawMain">
       <header class="dh">
         <p class="ev">LS엠트론 2026 CIO × CTO 송년회</p>
-        <h1 class="mc">Merry Christmas</h1>
+        <h1 class="mc">Merry Cheersmas</h1>
         <p class="note">장식을 고르고 꾸며서 스크린으로 보내 주세요</p>
       </header>
       <p class="lbl">1. 장식 고르기</p>
