@@ -64,20 +64,33 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 @keyframes breathe{50%{opacity:.45}}
 .wbar{position:absolute;right:1.2vw;top:1.2vh;display:flex;gap:8px;z-index:8;opacity:0;transition:opacity .3s}
 .wbar:hover,.wbar:focus-within{opacity:1}
-.wbar .btn{min-height:40px;font-size:14px;padding:0 16px}
+.wbar .btn{min-height:40px;font-size:14px;padding:0 16px;white-space:nowrap}
+[hidden]{display:none!important}
+@media (max-width:700px){.wbar{left:2vw;right:2vw;flex-wrap:wrap;justify-content:flex-end;gap:6px}.wbar .btn{min-height:36px;font-size:13px;padding:0 12px}#whead .mc{font-size:min(clamp(64px,13.5vh,230px),15vw)}}
 #modbar{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%);background:var(--deep);border-radius:999px;padding:8px 8px 8px 20px;display:none;gap:8px;align-items:center;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #modbar.on{display:flex}
 .adm .wbar{opacity:.55}
 .peek .it{cursor:zoom-in}.peek .it:hover canvas{outline:2px dashed var(--gold);outline-offset:4px}
 #peek{position:fixed;inset:0;display:none;place-items:center;background:rgba(5,20,16,.6);backdrop-filter:blur(4px);z-index:35}
 #peek.on{display:grid}
-#peek .pk{position:relative;background:var(--ink);color:var(--deep);border-radius:28px;padding:30px 36px 24px;text-align:center;width:min(480px,88vw);box-shadow:0 30px 70px rgba(0,0,0,.55);animation:pkin .45s cubic-bezier(.2,1.4,.4,1)}
+#peek .pk{position:relative;background:var(--ink);color:var(--deep);border-radius:clamp(22px,3vh,40px);padding:clamp(24px,3.4vh,52px) clamp(26px,3.6vh,56px) clamp(20px,2.6vh,40px);text-align:center;width:min(max(420px,58vh),90vw);box-shadow:0 30px 70px rgba(0,0,0,.55);animation:pkin .45s cubic-bezier(.2,1.4,.4,1)}
 @keyframes pkin{from{transform:scale(.8);opacity:0}}
 #pkArt canvas{display:block;margin:0 auto 12px;max-width:100%;height:auto!important;filter:drop-shadow(0 10px 12px rgba(0,0,0,.22))}
-#pkN{font:400 clamp(38px,5vh,60px)/1.1 "Nanum Pen Script",cursive;color:var(--red)}
-#pkM{font-size:19px;margin-top:6px;min-height:1.4em;word-break:keep-all}
+#pkN{font:400 clamp(38px,6.4vh,96px)/1.1 "Nanum Pen Script",cursive;color:var(--red);overflow-wrap:anywhere}
+#pkM{font-size:clamp(18px,2.8vh,40px);margin-top:6px;min-height:1.4em;word-break:keep-all}
 #pkM:empty::before{content:"(한마디 없음)";opacity:.4}
-#pkT{display:inline-block;font-size:13px;margin-top:14px;padding:4px 12px;border-radius:999px;background:rgba(13,42,34,.08);color:rgba(13,42,34,.7)}
+#pkT{display:inline-block;font-size:clamp(13px,1.8vh,24px);margin-top:14px;padding:4px 12px;border-radius:999px;background:rgba(13,42,34,.08);color:rgba(13,42,34,.7)}
+#plist{position:fixed;right:1.2vw;top:calc(1.2vh + 52px);bottom:3vh;width:min(320px,40vw);z-index:9;background:rgba(13,42,34,.94);backdrop-filter:blur(6px);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 40px rgba(0,0,0,.45)}
+#plist[hidden]{display:none}
+#plist>b{font-weight:400;color:var(--gold)}#plist small{color:var(--soft);font-size:12px;margin-left:6px}
+#plGrid{overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;align-content:start}
+#plGrid button{background:rgba(251,243,226,.06);border-radius:12px;padding:6px 4px;display:grid;justify-items:center;gap:2px;font-size:12px;color:var(--ink);min-width:0}
+#plGrid button:hover,#plGrid button.cur{background:rgba(233,198,117,.22)}
+#plGrid canvas{width:56px!important;height:56px!important}
+#plGrid span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#plGrid i{font-style:normal;color:var(--mus);font-size:11px}
+#plGrid p{grid-column:1/-1;color:var(--soft);font-size:13px;text-align:center;padding:20px 0}
+@media (max-width:700px),(max-height:500px){#plist{left:2vw;right:2vw;width:auto;top:auto;max-height:50vh}}
 #pkX{position:absolute;right:10px;top:8px;width:44px;height:44px;font-size:30px;line-height:1;color:var(--deep);opacity:.55}#pkX:hover{opacity:1}
 #login{position:fixed;inset:0;display:none;place-items:center;background:rgba(5,20,16,.7);z-index:40}#login.on{display:grid}#login form{background:var(--deep);border-radius:20px;padding:22px;display:grid;gap:10px;width:min(360px,90vw);box-shadow:0 20px 50px rgba(0,0,0,.5)}#login input{height:44px;border-radius:12px;border:0;padding:0 12px;font:16px "Gowun Dodum",sans-serif;background:#143a30;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}#login p{font-size:13px;color:var(--mus);min-height:18px}
 #banner{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);background:var(--mus);color:var(--deep);font-size:12px;padding:5px 12px;border-radius:999px;z-index:30;display:none;white-space:nowrap}
@@ -196,6 +209,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 <canvas id="pfx"></canvas>
 <div id="beam"></div>
 <div id="login"><form id="loginForm"><b>관리자 로그인</b><input id="lgEmail" type="email" autocomplete="username" placeholder="관리자 이메일"><input id="lgPw" type="password" autocomplete="current-password" placeholder="비밀번호"><p id="lgMsg"></p><div style="display:flex;gap:8px"><button class="btn" type="submit">로그인</button><button class="btn ghost" type="button" id="lgCancel">취소</button></div></form></div>
+<div id="plist" hidden><b>그림 목록<small id="plHint">눌러서 크게 보기</small></b><div id="plGrid"></div></div>
 <div id="peek"><div class="pk" role="dialog" aria-label="그림 자세히 보기"><button id="pkX" aria-label="닫기">×</button><div id="pkArt"></div><div id="pkN"></div><div id="pkM"></div><div id="pkT"></div></div></div>
 <div id="modbar"><span>이 그림을 스크린에서 내릴까요?</span><button class="btn" id="modYes" style="min-height:40px">내리기</button><button class="btn ghost" id="modNo" style="min-height:40px">취소</button></div>
 
@@ -470,6 +484,8 @@ function take(all) {
   if (first) { resizeWall(); all.forEach(i => seen.add(i.id)); all.slice(-MAX_WALL).forEach((it, i) => spawnLive(it, i)); }
   else for (const it of all) if (!seen.has(it.id)) { seen.add(it.id); enqueue(it); }
   first = false; trim(); resizeWall(); updStat(); play();
+  if (peek) renderList();
+  if (pendSpot && store.has(pendSpot)) { if (pendSpot === spotId) showCard(store.get(pendSpot)); pendSpot = ""; }
 }
 function push(x, y, B) {
   const R = Math.max(W, H) * .62;
@@ -639,7 +655,7 @@ function drawQr() {
 function startWall() {
   if (started) return; started = true; drawQr();
   if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; document.body.classList.add("adm"); }
-  stream(); setTimeout(prune, 5000);
+  stream(); watchSpot(); setTimeout(prune, 5000);
 }
 async function login(email, pw) {
   const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + API_KEY, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password: pw, returnSecureToken: true }) });
@@ -650,7 +666,7 @@ $("#loginBtn").onclick = () => { $("#lgMsg").textContent = ""; $("#login").class
 $("#lgCancel").onclick = () => $("#login").classList.remove("on");
 $("#loginForm").onsubmit = async ev => {
   ev.preventDefault(); $("#lgMsg").textContent = "확인 중이에요";
-  try { await login($("#lgEmail").value.trim(), $("#lgPw").value); $("#lgPw").value = ""; $("#login").classList.remove("on"); $("#loginBtn").hidden = true; $("#modBtn").hidden = false; }
+  try { await login($("#lgEmail").value.trim(), $("#lgPw").value); $("#lgPw").value = ""; $("#login").classList.remove("on"); $("#loginBtn").hidden = true; $("#modBtn").hidden = false; if (peek) renderList(); }
   catch (_) { $("#lgMsg").textContent = "로그인하지 못했어요. 이메일과 비밀번호를 확인해 주세요"; }
 };
 const NAMES = ["IT팀 산타", "기술연구소 루돌프", "보안파트 엘프", "익명의 산타", "R&D 눈사람", "AI지원파트 빅토리"];
@@ -662,19 +678,69 @@ $("#testBtn").onclick = () => {
 };
 $("#fs").onclick = () => { const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); };
 /* ---------- 관리자: 그림 보기(누가 썼는지 확인) ---------- */
-let peek = false;
-function setPeek(on) { peek = on; field.classList.toggle("peek", on); $("#peekBtn").textContent = on ? "그림 보기 끝내기" : "그림 보기"; }
+/* 관리자(로그인)가 고른 그림은 DB의 /spot 에 적히고, 이 주소를 연 모든 화면(TV 포함)이 같은 카드를 크게 띄움 */
+let peek = false, cardId = "", spotMine = false;
+function setPeek(on) {
+  peek = on; field.classList.toggle("peek", on); $("#peekBtn").textContent = on ? "그림 보기 끝내기" : "그림 보기";
+  $("#plist").hidden = !on; if (on) renderList(); else if (spotMine) closePeek();
+}
 function setMod(on) { mod = on; field.classList.toggle("mod", on); $("#modBtn").textContent = on ? "정리 끝내기" : "그림 정리"; if (!on) { modTarget = null; $("#modbar").classList.remove("on"); } }
-function openPeek(o) {
-  const it = o.it, all = [...store.values()].sort((a, b) => a.at - b.at), idx = all.findIndex(e => e.id === it.id);
-  const art = $("#pkArt"); art.textContent = ""; art.appendChild(cv(it, Math.min(320, Math.round(innerHeight * .4))));
+const sortedEntries = () => [...store.values()].sort((a, b) => a.at - b.at);
+function renderList() {
+  const g = $("#plGrid"), all = sortedEntries(); g.textContent = "";
+  $("#plHint").textContent = isAdmin ? "누르면 TV에도 크게 떠요" : "눌러서 크게 보기 · TV에 띄우려면 관리자 로그인";
+  if (!all.length) { const p = document.createElement("p"); p.textContent = "아직 올라온 그림이 없어요"; g.appendChild(p); return; }
+  all.forEach((it, i) => {
+    const b = document.createElement("button"); b.dataset.id = it.id; if (it.id === cardId) b.className = "cur";
+    const num = document.createElement("i"); num.textContent = (i + 1) + "번째";
+    const nm = document.createElement("span"); nm.textContent = it.n || "익명의 산타";
+    b.append(cv(it, 56), nm, num); b.onclick = () => pickEntry(it); g.prepend(b);
+  });
+}
+function showCard(it) {
+  cardId = it.id;
+  const all = sortedEntries(), idx = all.findIndex(e => e.id === it.id);
+  const art = $("#pkArt"); art.textContent = ""; art.appendChild(cv(it, Math.round(Math.min(560, innerHeight * .42, innerWidth * .7))));
   $("#pkN").textContent = it.n ? String(it.n).slice(0, 12) : "익명의 산타";
   $("#pkM").textContent = it.m ? String(it.m).slice(0, 40) : "";
   const when = it.at ? new Date(+it.at).toLocaleTimeString("ko-KR", { hour: "numeric", minute: "2-digit" }) : "";
   $("#pkT").textContent = it.test ? "테스트 장식" : [idx >= 0 ? (idx + 1) + "번째 마음" : "", when].filter(Boolean).join(" · ");
   $("#peek").classList.add("on"); $("#pkX").focus();
+  for (const b of document.querySelectorAll("#plGrid button")) b.classList.toggle("cur", b.dataset.id === it.id);
 }
-const closePeek = () => $("#peek").classList.remove("on");
+let bt = 0; const flash = t => { banner(t); clearTimeout(bt); bt = setTimeout(() => banner(""), 4000); };
+async function sendSpot(id) {
+  try {
+    const r = await fetch(DB_URL + "/spot.json?auth=" + encodeURIComponent(idToken), { method: "PUT", body: JSON.stringify(id ? { id, at: { ".sv": "timestamp" } } : null) });
+    if (!r.ok) flash("TV에 띄우지 못했어요. 관리자 로그인을 다시 해 주세요");
+  } catch (_) { flash("TV에 띄우지 못했어요. 연결을 확인해 주세요"); }
+}
+function pickEntry(it) {
+  showCard(it);
+  if (isAdmin && !it.test) { spotMine = true; sendSpot(it.id); }
+}
+function openPeek(o) { pickEntry(o.it); }
+function closePeek() {
+  $("#peek").classList.remove("on"); cardId = "";
+  for (const b of document.querySelectorAll("#plGrid button.cur")) b.classList.remove("cur");
+  if (spotMine && isAdmin) { spotMine = false; sendSpot(null); }
+}
+let spotId = "", pendSpot = "";
+function onSpot(v) {
+  const id = v && typeof v.id === "string" ? v.id : "";
+  if (id === spotId) return; spotId = id;
+  if (id) { if (Date.now() - (+v.at || 0) > 30 * 60000) return; const it = store.get(id); if (it) showCard(it); else pendSpot = id; }
+  else if (!spotMine) { $("#peek").classList.remove("on"); cardId = ""; }
+}
+function watchSpot() {
+  const get = async () => { try { const r = await fetch(DB_URL + "/spot.json", { cache: "no-store" }); if (r.ok) onSpot(await r.json()); } catch (_) {} };
+  const poll = () => { get(); setTimeout(poll, 3000); };
+  if (!window.EventSource) return poll();
+  let ok = false; const es2 = new EventSource(DB_URL + "/spot.json");
+  const h = () => { ok = true; get(); };
+  es2.addEventListener("put", h); es2.addEventListener("patch", h);
+  es2.onerror = () => { if (!ok) { es2.close(); poll(); } };
+}
 $("#peekBtn").onclick = () => { setMod(false); setPeek(!peek); };
 $("#pkX").onclick = closePeek;
 $("#peek").onclick = ev => { if (ev.target.id === "peek") closePeek(); };
