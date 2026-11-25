@@ -336,7 +336,7 @@ function Fx(canvas, clear) {
 /* ---------- firebase: TV는 이 사이트와 DB 주소 두 곳에만 접속 ---------- */
 const DB_URL = "https://mtron-guestbook-default-rtdb.asia-southeast1.firebasedatabase.app";
 const API_KEY = "AIzaSyAACg8yK7VpXX-v58MBbJnH79TO7DRfe10";
-const ADMIN_MODE = new URLSearchParams(location.search).has("admin"), ADMIN_KEY = new URLSearchParams(location.search).get("admin") || "";
+const ADMIN_KEY = new URLSearchParams(location.search).get("admin") || "", ADMIN_MODE = ADMIN_KEY.length > 0; /* 키가 붙은 관리자 주소일 때만 관리자 화면 */
 let isAdmin = false, idToken = "";
 const banner = t => { const b = $("#banner"); b.textContent = t; b.style.display = t ? "block" : "none"; };
 /* ---------- draw (phone) ---------- */
