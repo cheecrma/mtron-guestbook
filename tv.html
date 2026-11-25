@@ -83,6 +83,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #pkT{display:inline-block;font-size:clamp(13px,1.8vh,24px);margin-top:14px;padding:4px 12px;border-radius:999px;background:rgba(13,42,34,.08);color:rgba(13,42,34,.7)}
 #plist{position:fixed;right:1.2vw;top:calc(1.2vh + 52px);bottom:3vh;width:min(320px,40vw);z-index:9;background:rgba(13,42,34,.94);backdrop-filter:blur(6px);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 40px rgba(0,0,0,.45)}
 #plist[hidden]{display:none}
+#plFind{display:flex;gap:6px}#plFind input{flex:1;min-width:0;height:40px;border-radius:10px;border:0;padding:0 10px;font:16px "Gowun Dodum",sans-serif;background:#143a30;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}#plFind .btn{min-height:40px;font-size:14px;padding:0 14px}
+.it .tag{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:1.7em;padding:.18em .5em;border-radius:999px;background:var(--deep);color:var(--gold);font:700 clamp(16px,2.8vh,44px)/1 "Gowun Dodum",sans-serif;text-align:center;box-shadow:0 0 0 2px var(--gold),0 6px 16px rgba(0,0,0,.45);pointer-events:none}
+body.tags .it .tag{display:block;animation:pkin .4s cubic-bezier(.2,1.5,.4,1)}
 #wonReset{align-self:flex-start;font-size:12px;color:var(--soft);text-decoration:underline;opacity:.75}
 #plGrid button.won{box-shadow:inset 0 0 0 2px var(--gold)}#plGrid button.won i::after{content:" · 당첨";color:var(--gold)}
 #peek{overflow:hidden}
@@ -170,6 +173,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
     <button class="btn" id="fs">전체화면</button>
     <button class="btn ghost" id="testBtn">테스트 장식</button>
     <button class="btn ghost" id="peekBtn" hidden>그림 보기</button>
+    <button class="btn ghost" id="tagBtn" hidden>번호 보기</button>
     <button class="btn ghost" id="rafBtn" hidden>추첨</button>
     <button class="btn ghost" id="loginBtn" hidden>관리자 로그인</button>
     <button class="btn ghost" id="modBtn" hidden>그림 정리</button>
@@ -219,7 +223,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 <canvas id="pfx"></canvas>
 <div id="beam"></div>
 <div id="login"><form id="loginForm"><b>관리자 로그인</b><input id="lgEmail" type="email" autocomplete="username" placeholder="관리자 이메일"><input id="lgPw" type="password" autocomplete="current-password" placeholder="비밀번호"><p id="lgMsg"></p><div style="display:flex;gap:8px"><button class="btn" type="submit">로그인</button><button class="btn ghost" type="button" id="lgCancel">취소</button></div></form></div>
-<div id="plist" hidden><b>그림 목록<small id="plHint">눌러서 크게 보기</small></b><button id="wonReset" hidden>당첨 기록 지우기</button><div id="plGrid"></div></div>
+<div id="plist" hidden><b>그림 목록<small id="plHint">눌러서 크게 보기</small></b><form id="plFind"><input id="plNum" type="number" inputmode="numeric" min="1" placeholder="번호 입력 (예: 17)"><button class="btn" type="submit">크게 보기</button></form><button id="wonReset" hidden>당첨 기록 지우기</button><div id="plGrid"></div></div>
 <div id="peek"><div class="pk" role="dialog" aria-label="그림 자세히 보기"><button id="pkX" aria-label="닫기">×</button><div id="pkWin">🎉 당첨을 축하해요!</div><div id="pkArt"></div><div id="pkN"></div><div id="pkM"></div><div id="pkT"></div></div></div>
 <div id="modbar"><span>이 그림을 스크린에서 내릴까요?</span><button class="btn" id="modYes" style="min-height:40px">내리기</button><button class="btn ghost" id="modNo" style="min-height:40px">취소</button></div>
 
@@ -442,7 +446,11 @@ function resizeWall() {
   const ns = Math.round(Math.min(280, Math.max(80, Math.sqrt(free / n) * .6)) / 10) * 10;
   if (ns !== size) { size = ns; for (const o of live.values()) if (o.state === "live" || o.state === "leaving") setCanvas(o, size); }
 }
-function setCanvas(o, cs) { if (o.cs === cs) return; o.cs = cs; o.el.style.width = o.el.style.height = cs + "px"; o.el.textContent = ""; o.el.appendChild(cv(o.it, cs)); }
+function setCanvas(o, cs) { if (o.cs === cs) return; o.cs = cs; o.el.style.width = o.el.style.height = cs + "px"; o.el.textContent = ""; o.el.appendChild(cv(o.it, cs)); tagEl(o); }
+/* 번호표: 전체 그림 중 몇 번째인지(보낸 순서). 관리자 목록의 "N번째"와 같은 번호 */
+let numOf = new Map();
+function tagEl(o) { let t = o.el.querySelector(".tag"); if (!t) { t = document.createElement("b"); t.className = "tag"; o.el.appendChild(t); } t.textContent = o.test ? "T" : (numOf.get(o.id) || ""); }
+function updateTags() { numOf = new Map([...store.values()].sort((a, b) => a.at - b.at).map((e, i) => [e.id, i + 1])); for (const o of live.values()) tagEl(o); }
 function place(o) {
   const rot = o.state === "drop" ? o.rot : o.r0 + o.rot + Math.sin(o.ph * .9) * 4;
   o.el.style.transform = `translate(${(o.x - o.cs / 2).toFixed(1)}px,${(o.y - o.cs / 2).toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${(o.k * o.sx).toFixed(3)},${(o.k * o.sy).toFixed(3)})`;
@@ -462,7 +470,7 @@ function mkItem(it, state) {
   const el = document.createElement("div"); el.className = "it"; field.appendChild(el);
   const h = hash(it.id);
   const o = { id: it.id, it, at: +it.at || 0, el, cs: 0, x: W / 2, y: cy, vx: 0, vy: 0, k: 1, sx: 1, sy: 1, r0: (h - .5) * 24, rot: 0, rv: 0, ph: h * 40, seed: h, state, test: !!it.test };
-  el.onclick = () => { if (o.state !== "live") return; if (mod) askMod(o); else if (peek) openPeek(o); };
+  el.onclick = () => { if (o.state !== "live") return; if (mod) askMod(o); else if (peek || !ADMIN_MODE) openPeek(o); };
   live.set(it.id, o); return o;
 }
 function spawnLive(it, i) {
@@ -493,7 +501,7 @@ function take(all) {
   }
   if (first) { resizeWall(); all.forEach(i => seen.add(i.id)); all.slice(-MAX_WALL).forEach((it, i) => spawnLive(it, i)); }
   else for (const it of all) if (!seen.has(it.id)) { seen.add(it.id); enqueue(it); }
-  first = false; trim(); resizeWall(); updStat(); play();
+  updateTags(); first = false; trim(); resizeWall(); updStat(); play();
   if (peek) renderList();
   if (pendSpot && store.has(pendSpot)) { if (pendSpot === spotId) showCard(store.get(pendSpot)); pendSpot = ""; }
 }
@@ -584,6 +592,7 @@ function physics(dt) {
       }
       if (o.x < m) { o.x = m; o.vx = Math.abs(o.vx) * .6; } if (o.x > W - m) { o.x = W - m; o.vx = -Math.abs(o.vx) * .6; }
       if (o.y < m) { o.y = m; o.vy = Math.abs(o.vy) * .6; } if (o.y > H - m) { o.y = H - m; o.vy = -Math.abs(o.vy) * .6; }
+      if (tagsOn) { const f = Math.exp(-4 * dt); o.vx *= f; o.vy *= f; o.rv *= f; }
       const sp = Math.hypot(o.vx, o.vy); if (sp > max) { const k = Math.max(max / sp, Math.exp(-2.4 * dt)); o.vx *= k; o.vy *= k; }
       o.rv *= Math.exp(-2.2 * dt); o.rot += o.rv * dt;
     }
@@ -680,8 +689,8 @@ function drawQr() {
 }
 function startWall() {
   if (started) return; started = true; drawQr();
-  if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; $("#rafBtn").hidden = false; document.body.classList.add("adm"); }
-  stream(); watchSpot(); setTimeout(prune, 5000);
+  if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; $("#rafBtn").hidden = false; $("#tagBtn").hidden = false; document.body.classList.add("adm"); }
+  stream(); watchSpot(); watchNode("/stage.json", v => applyTags(v && v.tags)); setTimeout(prune, 5000);
 }
 async function login(email, pw) {
   const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + API_KEY, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password: pw, returnSecureToken: true }) });
@@ -765,16 +774,11 @@ function onSpot(v) {
   }
   else if (!spotMine) { rafTok++; $("#peek").classList.remove("on", "spin", "win"); cardId = ""; }
 }
-/* ---------- 추첨: DB 전체 그림에서, 이름 적은 사람만, 사람마다 한 번, 이미 당첨된 이름 제외 ---------- */
-const norm = s => String(s || "").replace(/\s+/g, "").toLowerCase();
+/* ---------- 추첨: DB 전체 그림에서, 그림 1장 = 추첨권 1장(익명 포함), 이미 당첨된 그림만 제외 ---------- */
 const getWon = () => { try { return JSON.parse(localStorage.getItem("mtron-winners") || "[]"); } catch (_) { return []; } };
 const setWon = a => { try { localStorage.setItem("mtron-winners", JSON.stringify(a)); } catch (_) {} };
 const wonIds = () => new Set(getWon().map(w => w.id));
-function rafflePool() {
-  const won = new Set(getWon().map(w => norm(w.n))), by = new Map();
-  for (const e of store.values()) { if (e.test) continue; const k = norm(e.n); if (!k || won.has(k)) continue; if (!by.has(k)) by.set(k, []); by.get(k).push(e); }
-  return [...by.values()];
-}
+function rafflePool() { const won = wonIds(); return [...store.values()].filter(e => !e.test && !won.has(e.id)); }
 let rafTok = 0;
 function confetti() {
   const pk = $("#peek"), COLS = ["#e9c675", "#fbf3e2", "#c8364a", "#9bbf95", "#e88aa0", "#e2b24a"];
@@ -788,7 +792,7 @@ function confetti() {
 }
 function playRaffle(it) {
   const tok = ++rafTok, pk = $("#peek"); pk.classList.remove("win"); pk.classList.add("spin");
-  const cands = [...store.values()].filter(e => e.n && !e.test); if (!cands.length) cands.push(it);
+  const cands = [...store.values()].filter(e => !e.test); if (!cands.length) cands.push(it);
   let d = 55, t = 0;
   const tick = () => {
     if (tok !== rafTok) return;
@@ -799,14 +803,39 @@ function playRaffle(it) {
 }
 $("#rafBtn").onclick = () => {
   const pool = rafflePool();
-  if (!pool.length) { flash("추첨할 사람이 없어요. 이름을 적은 그림만 추첨해요"); return; }
-  const g = pool[Math.random() * pool.length | 0], w = g[Math.random() * g.length | 0];
+  if (!pool.length) { flash("추첨할 그림이 없어요"); return; }
+  const w = pool[Math.random() * pool.length | 0];
   setMod(false); const won = getWon(); won.push({ id: w.id, n: w.n, at: Date.now() }); setWon(won);
   if (isAdmin) { spotMine = true; sendSpot(w.id, true); }
   else { playRaffle(w); flash("관리자 로그인을 하면 TV에도 추첨 화면이 떠요"); }
   if (peek) renderList();
 };
-$("#wonReset").onclick = () => { if (confirm("당첨 기록을 지울까요? 지우면 이전 당첨자도 다시 뽑힐 수 있어요.")) { setWon([]); renderList(); } };
+$("#wonReset").onclick = () => { if (confirm("당첨 기록을 지울까요? 지우면 이미 당첨된 그림도 다시 뽑힐 수 있어요.")) { setWon([]); renderList(); } };
+let tagsOn = false;
+function applyTags(on) { tagsOn = !!on; document.body.classList.toggle("tags", tagsOn); $("#tagBtn").textContent = tagsOn ? "번호 숨기기" : "번호 보기"; }
+async function sendStage(on) {
+  try { const r = await fetch(DB_URL + "/stage.json?auth=" + encodeURIComponent(idToken), { method: "PUT", body: JSON.stringify({ tags: on }) }); if (!r.ok) flash("TV에 반영하지 못했어요. 관리자 로그인을 다시 해 주세요"); }
+  catch (_) { flash("TV에 반영하지 못했어요. 연결을 확인해 주세요"); }
+}
+$("#tagBtn").onclick = () => {
+  const on = !tagsOn; applyTags(on);
+  if (isAdmin) sendStage(on); else flash("관리자 로그인을 하면 TV에도 번호가 떠요");
+  if (on && !peek) { setMod(false); setPeek(true); } setTimeout(() => $("#plNum").focus(), 50);
+};
+$("#plFind").onsubmit = ev => {
+  ev.preventDefault(); const n = parseInt($("#plNum").value, 10), all = [...store.values()].sort((a, b) => a.at - b.at);
+  if (!(n >= 1 && n <= all.length)) { flash("1부터 " + all.length + " 사이의 번호를 넣어 주세요"); return; }
+  pickEntry(all[n - 1]); $("#plNum").value = ""; $("#plNum").blur();
+};
+function watchNode(path, cb) {
+  const get = async () => { try { const r = await fetch(DB_URL + path, { cache: "no-store" }); if (r.ok) cb(await r.json()); } catch (_) {} };
+  const poll = () => { get(); setTimeout(poll, 3000); };
+  if (!window.EventSource) return poll();
+  let ok = false; const es3 = new EventSource(DB_URL + path);
+  const h = () => { ok = true; get(); };
+  es3.addEventListener("put", h); es3.addEventListener("patch", h);
+  es3.onerror = () => { if (!ok) { es3.close(); poll(); } };
+}
 function watchSpot() {
   const get = async () => { try { const r = await fetch(DB_URL + "/spot.json", { cache: "no-store" }); if (r.ok) onSpot(await r.json()); } catch (_) {} };
   const poll = () => { get(); setTimeout(poll, 3000); };
