@@ -81,13 +81,8 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #pkM{font-size:clamp(18px,2.8vh,40px);margin-top:6px;min-height:1.4em;word-break:keep-all}
 #pkM:empty::before{content:"(한마디 없음)";opacity:.4}
 #pkT{display:inline-block;font-size:clamp(13px,1.8vh,24px);margin-top:14px;padding:4px 12px;border-radius:999px;background:rgba(13,42,34,.08);color:rgba(13,42,34,.7)}
-#plist{position:fixed;right:1.2vw;top:calc(1.2vh + 52px);bottom:3vh;width:min(320px,40vw);z-index:9;background:rgba(13,42,34,.94);backdrop-filter:blur(6px);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 40px rgba(0,0,0,.45)}
+#plist{position:fixed;right:1.2vw;top:calc(1.2vh + 52px);bottom:3vh;width:min(420px,46vw);z-index:9;background:rgba(13,42,34,.94);backdrop-filter:blur(6px);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 40px rgba(0,0,0,.45)}
 #plist[hidden]{display:none}
-#plFind{display:flex;gap:6px}#plFind input{flex:1;min-width:0;height:40px;border-radius:10px;border:0;padding:0 10px;font:16px "Gowun Dodum",sans-serif;background:#143a30;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}#plFind .btn{min-height:40px;font-size:14px;padding:0 14px}
-.it .tag{display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-width:1.7em;padding:.18em .5em;border-radius:999px;background:var(--deep);color:var(--gold);font:700 clamp(16px,2.8vh,44px)/1 "Gowun Dodum",sans-serif;text-align:center;box-shadow:0 0 0 2px var(--gold),0 6px 16px rgba(0,0,0,.45);pointer-events:none}
-body.tags .it .tag{display:block;animation:pkin .4s cubic-bezier(.2,1.5,.4,1)}
-#wonReset{align-self:flex-start;font-size:12px;color:var(--soft);text-decoration:underline;opacity:.75}
-#plGrid button.won{box-shadow:inset 0 0 0 2px var(--gold)}#plGrid button.won i::after{content:" · 당첨";color:var(--gold)}
 #peek{overflow:hidden}
 #pkWin{display:none;width:max-content;margin:0 auto 10px;padding:.3em 1.1em;border-radius:999px;background:var(--gold);color:var(--deep);font-weight:700;font-size:clamp(15px,2.2vh,30px)}
 #peek.win #pkWin{display:block;animation:pkin .55s cubic-bezier(.2,1.6,.4,1)}
@@ -95,7 +90,7 @@ body.tags .it .tag{display:block;animation:pkin .4s cubic-bezier(.2,1.5,.4,1)}
 #peek.spin #pkN{opacity:.75}
 .cf{position:absolute;top:-5vh;width:clamp(8px,1vh,16px);height:clamp(12px,1.6vh,26px);border-radius:2px;pointer-events:none;animation:cf linear forwards}
 @keyframes cf{to{transform:translate(var(--dx),115vh) rotate(var(--r))}}
-#plist>b{font-weight:400;color:var(--gold)}#plist small{color:var(--soft);font-size:12px;margin-left:6px}
+.plh{display:flex;align-items:center;justify-content:space-between}.plh b{font-weight:400;color:var(--gold)}#plClose{width:40px;height:40px;font-size:28px;line-height:1;color:var(--ink);opacity:.7}#plist small{color:var(--soft);font-size:12px;margin-left:6px}
 #plGrid{overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;align-content:start}
 #plGrid button{background:rgba(251,243,226,.06);border-radius:12px;padding:6px 4px;display:grid;justify-items:center;gap:2px;font-size:12px;color:var(--ink);min-width:0}
 #plGrid button:hover,#plGrid button.cur{background:rgba(233,198,117,.22)}
@@ -173,7 +168,7 @@ body.tags .it .tag{display:block;animation:pkin .4s cubic-bezier(.2,1.5,.4,1)}
     <button class="btn" id="fs">전체화면</button>
     <button class="btn ghost" id="testBtn">테스트 장식</button>
     <button class="btn ghost" id="peekBtn" hidden>그림 보기</button>
-    <button class="btn ghost" id="tagBtn" hidden>번호 보기</button>
+    <button class="btn ghost" id="listBtn" hidden>목록 보기</button>
     <button class="btn ghost" id="rafBtn" hidden>추첨</button>
     <button class="btn ghost" id="loginBtn" hidden>관리자 로그인</button>
     <button class="btn ghost" id="modBtn" hidden>그림 정리</button>
@@ -223,7 +218,7 @@ body.tags .it .tag{display:block;animation:pkin .4s cubic-bezier(.2,1.5,.4,1)}
 <canvas id="pfx"></canvas>
 <div id="beam"></div>
 <div id="login"><form id="loginForm"><b>관리자 로그인</b><input id="lgEmail" type="email" autocomplete="username" placeholder="관리자 이메일"><input id="lgPw" type="password" autocomplete="current-password" placeholder="비밀번호"><p id="lgMsg"></p><div style="display:flex;gap:8px"><button class="btn" type="submit">로그인</button><button class="btn ghost" type="button" id="lgCancel">취소</button></div></form></div>
-<div id="plist" hidden><b>그림 목록<small id="plHint">눌러서 크게 보기</small></b><form id="plFind"><input id="plNum" type="number" inputmode="numeric" min="1" placeholder="번호 입력 (예: 17)"><button class="btn" type="submit">크게 보기</button></form><button id="wonReset" hidden>당첨 기록 지우기</button><div id="plGrid"></div></div>
+<div id="plist" hidden><div class="plh"><b>그림 목록<small id="plHint"></small></b><button id="plClose" aria-label="목록 닫기">×</button></div><div id="plGrid"></div></div>
 <div id="peek"><div class="pk" role="dialog" aria-label="그림 자세히 보기"><button id="pkX" aria-label="닫기">×</button><div id="pkWin">🎉 당첨을 축하해요!</div><div id="pkArt"></div><div id="pkN"></div><div id="pkM"></div><div id="pkT"></div></div></div>
 <div id="modbar"><span>이 그림을 스크린에서 내릴까요?</span><button class="btn" id="modYes" style="min-height:40px">내리기</button><button class="btn ghost" id="modNo" style="min-height:40px">취소</button></div>
 
@@ -341,7 +336,7 @@ function Fx(canvas, clear) {
 /* ---------- firebase: TV는 이 사이트와 DB 주소 두 곳에만 접속 ---------- */
 const DB_URL = "https://mtron-guestbook-default-rtdb.asia-southeast1.firebasedatabase.app";
 const API_KEY = "AIzaSyAACg8yK7VpXX-v58MBbJnH79TO7DRfe10";
-const ADMIN_MODE = new URLSearchParams(location.search).has("admin");
+const ADMIN_MODE = new URLSearchParams(location.search).has("admin"), ADMIN_KEY = new URLSearchParams(location.search).get("admin") || "";
 let isAdmin = false, idToken = "";
 const banner = t => { const b = $("#banner"); b.textContent = t; b.style.display = t ? "block" : "none"; };
 /* ---------- draw (phone) ---------- */
@@ -446,11 +441,7 @@ function resizeWall() {
   const ns = Math.round(Math.min(280, Math.max(80, Math.sqrt(free / n) * .6)) / 10) * 10;
   if (ns !== size) { size = ns; for (const o of live.values()) if (o.state === "live" || o.state === "leaving") setCanvas(o, size); }
 }
-function setCanvas(o, cs) { if (o.cs === cs) return; o.cs = cs; o.el.style.width = o.el.style.height = cs + "px"; o.el.textContent = ""; o.el.appendChild(cv(o.it, cs)); tagEl(o); }
-/* 번호표: 전체 그림 중 몇 번째인지(보낸 순서). 관리자 목록의 "N번째"와 같은 번호 */
-let numOf = new Map();
-function tagEl(o) { let t = o.el.querySelector(".tag"); if (!t) { t = document.createElement("b"); t.className = "tag"; o.el.appendChild(t); } t.textContent = o.test ? "T" : (numOf.get(o.id) || ""); }
-function updateTags() { numOf = new Map([...store.values()].sort((a, b) => a.at - b.at).map((e, i) => [e.id, i + 1])); for (const o of live.values()) tagEl(o); }
+function setCanvas(o, cs) { if (o.cs === cs) return; o.cs = cs; o.el.style.width = o.el.style.height = cs + "px"; o.el.textContent = ""; o.el.appendChild(cv(o.it, cs)); }
 function place(o) {
   const rot = o.state === "drop" ? o.rot : o.r0 + o.rot + Math.sin(o.ph * .9) * 4;
   o.el.style.transform = `translate(${(o.x - o.cs / 2).toFixed(1)}px,${(o.y - o.cs / 2).toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${(o.k * o.sx).toFixed(3)},${(o.k * o.sy).toFixed(3)})`;
@@ -501,9 +492,9 @@ function take(all) {
   }
   if (first) { resizeWall(); all.forEach(i => seen.add(i.id)); all.slice(-MAX_WALL).forEach((it, i) => spawnLive(it, i)); }
   else for (const it of all) if (!seen.has(it.id)) { seen.add(it.id); enqueue(it); }
-  updateTags(); first = false; trim(); resizeWall(); updStat(); play();
+  first = false; trim(); resizeWall(); updStat(); play();
   if (peek) renderList();
-  if (pendSpot && store.has(pendSpot)) { if (pendSpot === spotId) showCard(store.get(pendSpot)); pendSpot = ""; }
+  if (pendSpot && store.has(pendSpot.id)) { const v = pendSpot; pendSpot = null; spotKey = ""; onSpot(v); }
 }
 function push(x, y, B) {
   const R = Math.max(W, H) * .62;
@@ -592,7 +583,6 @@ function physics(dt) {
       }
       if (o.x < m) { o.x = m; o.vx = Math.abs(o.vx) * .6; } if (o.x > W - m) { o.x = W - m; o.vx = -Math.abs(o.vx) * .6; }
       if (o.y < m) { o.y = m; o.vy = Math.abs(o.vy) * .6; } if (o.y > H - m) { o.y = H - m; o.vy = -Math.abs(o.vy) * .6; }
-      if (tagsOn) { const f = Math.exp(-4 * dt); o.vx *= f; o.vy *= f; o.rv *= f; }
       const sp = Math.hypot(o.vx, o.vy); if (sp > max) { const k = Math.max(max / sp, Math.exp(-2.4 * dt)); o.vx *= k; o.vy *= k; }
       o.rv *= Math.exp(-2.2 * dt); o.rot += o.rv * dt;
     }
@@ -689,8 +679,8 @@ function drawQr() {
 }
 function startWall() {
   if (started) return; started = true; drawQr();
-  if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; $("#rafBtn").hidden = false; $("#tagBtn").hidden = false; document.body.classList.add("adm"); }
-  stream(); watchSpot(); watchNode("/stage.json", v => applyTags(v && v.tags)); setTimeout(prune, 5000);
+  if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; $("#rafBtn").hidden = false; $("#listBtn").hidden = false; $("#testBtn").hidden = true; document.body.classList.add("adm"); }
+  stream(); watchSpot(); setTimeout(prune, 5000);
 }
 async function login(email, pw) {
   const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + API_KEY, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password: pw, returnSecureToken: true }) });
@@ -712,22 +702,19 @@ $("#testBtn").onclick = () => {
   testN++; $("#cnt").textContent = +$("#cnt").textContent + 1; seen.add(it.id); enqueue(it); play();
 };
 $("#fs").onclick = () => { const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); };
-/* ---------- 관리자: 그림 보기(누가 썼는지 확인) ---------- */
-/* 관리자(로그인)가 고른 그림은 DB의 /spot 에 적히고, 이 주소를 연 모든 화면(TV 포함)이 같은 카드를 크게 띄움 */
+/* ---------- 관리자: 그림 보기, 목록 보기, 추첨 ---------- */
+/* /tv?admin=키 에서 누른 것은 DB의 /spot 에 적히고, TV(/tv)가 그대로 따라 보여 줌. 로그인 불필요(키로 보호) */
 let peek = false, cardId = "", spotMine = false; const thumbs = new Map();
-function setPeek(on) {
-  peek = on; field.classList.toggle("peek", on); $("#peekBtn").textContent = on ? "그림 보기 끝내기" : "그림 보기";
-  $("#plist").hidden = !on; if (on) renderList(); else if (spotMine) closePeek();
-}
+function setPeek(on) { peek = on; field.classList.toggle("peek", on); $("#peekBtn").textContent = on ? "그림 보기 끝내기" : "그림 보기"; if (!on && spotMine) closePeek(); }
 function setMod(on) { mod = on; field.classList.toggle("mod", on); $("#modBtn").textContent = on ? "정리 끝내기" : "그림 정리"; if (!on) { modTarget = null; $("#modbar").classList.remove("on"); } }
 const sortedEntries = () => [...store.values()].sort((a, b) => a.at - b.at);
 function renderList() {
+  if ($("#plist").hidden) return;
   const g = $("#plGrid"), all = sortedEntries(); g.textContent = "";
-  $("#wonReset").hidden = !getWon().length;
-  $("#plHint").textContent = isAdmin ? "누르면 TV에도 크게 떠요" : "눌러서 크게 보기 · TV에 띄우려면 관리자 로그인";
+  $("#plHint").textContent = all.length + "개 · 누르면 TV에 크게 떠요";
   if (!all.length) { const p = document.createElement("p"); p.textContent = "아직 올라온 그림이 없어요"; g.appendChild(p); return; }
   all.forEach((it, i) => {
-    const b = document.createElement("button"); b.dataset.id = it.id; if (it.id === cardId) b.className = "cur"; if (wonIds().has(it.id)) b.classList.add("won");
+    const b = document.createElement("button"); b.dataset.id = it.id; if (it.id === cardId) b.className = "cur";
     const num = document.createElement("i"); num.textContent = (i + 1) + "번째";
     const nm = document.createElement("span"); nm.textContent = it.n || "익명의 산타";
     let th = thumbs.get(it.id); if (!th) { th = cv(it, 56); thumbs.set(it.id, th); }
@@ -747,38 +734,37 @@ function showCard(it) {
 }
 let bt = 0; const flash = t => { banner(t); clearTimeout(bt); bt = setTimeout(() => banner(""), 4000); };
 async function sendSpot(id, raffle) {
+  if (!ADMIN_KEY) { flash("TV에 띄우려면 관리자 키가 들어간 주소로 열어 주세요"); return false; }
+  const v = id ? Object.assign({ id, at: { ".sv": "timestamp" } }, raffle ? { raffle: true } : {}) : null;
   try {
-    const r = await fetch(DB_URL + "/spot.json?auth=" + encodeURIComponent(idToken), { method: "PUT", body: JSON.stringify(id ? Object.assign({ id, at: { ".sv": "timestamp" } }, raffle ? { raffle: true } : {}) : null) });
-    if (!r.ok) flash("TV에 띄우지 못했어요. 관리자 로그인을 다시 해 주세요");
-  } catch (_) { flash("TV에 띄우지 못했어요. 연결을 확인해 주세요"); }
+    const r = await fetch(DB_URL + "/spot.json", { method: "PUT", body: JSON.stringify(v ? { k: ADMIN_KEY, v } : { k: ADMIN_KEY }) });
+    if (!r.ok) { flash("TV에 띄우지 못했어요. 관리자 주소(키)를 확인해 주세요"); return false; }
+    return true;
+  } catch (_) { flash("TV에 띄우지 못했어요. 연결을 확인해 주세요"); return false; }
 }
 function pickEntry(it) {
   rafTok++; $("#peek").classList.remove("spin", "win"); showCard(it);
-  if (isAdmin && !it.test) { spotMine = true; sendSpot(it.id); }
+  if (ADMIN_MODE && !it.test) { spotMine = true; sendSpot(it.id); }
 }
 function openPeek(o) { pickEntry(o.it); }
 function closePeek() {
   rafTok++; $("#peek").classList.remove("on", "spin", "win"); cardId = "";
   for (const b of document.querySelectorAll("#plGrid button.cur")) b.classList.remove("cur");
-  if (spotMine && isAdmin) { spotMine = false; sendSpot(null); }
+  if (spotMine) { spotMine = false; sendSpot(null); }
 }
-let spotId = "", spotKey = "", pendSpot = "", spotSeen = false;
+let spotKey = "", pendSpot = null, spotSeen = false;
 function onSpot(v) {
-  const id = v && typeof v.id === "string" ? v.id : "", key = id + ":" + (v && v.at), initial = !spotSeen; spotSeen = true;
-  if (key === spotKey) return; spotKey = key; spotId = id;
+  const id = v && typeof v.id === "string" ? v.id : "", key = id + ":" + (v && v.at) + ":" + !!(v && v.raffle), initial = !spotSeen; spotSeen = true;
+  if (key === spotKey) return; spotKey = key; pendSpot = null;
   if (id) {
-    if (Date.now() - (+v.at || 0) > 30 * 60000) return; const it = store.get(id);
-    if (!it) pendSpot = id;
-    else if (v.raffle && !initial) playRaffle(it);
+    if (Date.now() - (+v.at || 0) > 30 * 60000) return;
+    const it = store.get(id);
+    if (!it) { pendSpot = v; return; }
+    if (v.raffle && !initial) playRaffle(it);
     else { rafTok++; $("#peek").classList.remove("spin"); $("#peek").classList.toggle("win", !!v.raffle); showCard(it); }
-  }
-  else if (!spotMine) { rafTok++; $("#peek").classList.remove("on", "spin", "win"); cardId = ""; }
+  } else if (!spotMine) { rafTok++; $("#peek").classList.remove("on", "spin", "win"); cardId = ""; }
 }
-/* ---------- 추첨: DB 전체 그림에서, 그림 1장 = 추첨권 1장(익명 포함), 이미 당첨된 그림만 제외 ---------- */
-const getWon = () => { try { return JSON.parse(localStorage.getItem("mtron-winners") || "[]"); } catch (_) { return []; } };
-const setWon = a => { try { localStorage.setItem("mtron-winners", JSON.stringify(a)); } catch (_) {} };
-const wonIds = () => new Set(getWon().map(w => w.id));
-function rafflePool() { const won = wonIds(); return [...store.values()].filter(e => !e.test && !won.has(e.id)); }
+/* ---------- 추첨: 매번 DB 전체 그림 중 완전 랜덤(익명 포함, 당첨돼도 다시 나올 수 있음) ---------- */
 let rafTok = 0;
 function confetti() {
   const pk = $("#peek"), COLS = ["#e9c675", "#fbf3e2", "#c8364a", "#9bbf95", "#e88aa0", "#e2b24a"];
@@ -801,51 +787,25 @@ function playRaffle(it) {
   };
   tick();
 }
-$("#rafBtn").onclick = () => {
-  const pool = rafflePool();
+$("#rafBtn").onclick = async () => {
+  const pool = [...store.values()].filter(e => !e.test);
   if (!pool.length) { flash("추첨할 그림이 없어요"); return; }
   const w = pool[Math.random() * pool.length | 0];
-  setMod(false); const won = getWon(); won.push({ id: w.id, n: w.n, at: Date.now() }); setWon(won);
-  if (isAdmin) { spotMine = true; sendSpot(w.id, true); }
-  else { playRaffle(w); flash("관리자 로그인을 하면 TV에도 추첨 화면이 떠요"); }
-  if (peek) renderList();
+  setMod(false); spotMine = true;
+  if (!(await sendSpot(w.id, true))) playRaffle(w); /* TV 반영에 실패해도 이 화면에서는 추첨이 돌아감. 성공하면 DB 신호를 받아 TV와 함께 돌아감 */
 };
-$("#wonReset").onclick = () => { if (confirm("당첨 기록을 지울까요? 지우면 이미 당첨된 그림도 다시 뽑힐 수 있어요.")) { setWon([]); renderList(); } };
-let tagsOn = false;
-function applyTags(on) { tagsOn = !!on; document.body.classList.toggle("tags", tagsOn); $("#tagBtn").textContent = tagsOn ? "번호 숨기기" : "번호 보기"; }
-async function sendStage(on) {
-  try { const r = await fetch(DB_URL + "/stage.json?auth=" + encodeURIComponent(idToken), { method: "PUT", body: JSON.stringify({ tags: on }) }); if (!r.ok) flash("TV에 반영하지 못했어요. 관리자 로그인을 다시 해 주세요"); }
-  catch (_) { flash("TV에 반영하지 못했어요. 연결을 확인해 주세요"); }
-}
-$("#tagBtn").onclick = () => {
-  const on = !tagsOn; applyTags(on);
-  if (isAdmin) sendStage(on); else flash("관리자 로그인을 하면 TV에도 번호가 떠요");
-  if (on && !peek) { setMod(false); setPeek(true); } setTimeout(() => $("#plNum").focus(), 50);
-};
-$("#plFind").onsubmit = ev => {
-  ev.preventDefault(); const n = parseInt($("#plNum").value, 10), all = [...store.values()].sort((a, b) => a.at - b.at);
-  if (!(n >= 1 && n <= all.length)) { flash("1부터 " + all.length + " 사이의 번호를 넣어 주세요"); return; }
-  pickEntry(all[n - 1]); $("#plNum").value = ""; $("#plNum").blur();
-};
-function watchNode(path, cb) {
-  const get = async () => { try { const r = await fetch(DB_URL + path, { cache: "no-store" }); if (r.ok) cb(await r.json()); } catch (_) {} };
-  const poll = () => { get(); setTimeout(poll, 3000); };
-  if (!window.EventSource) return poll();
-  let ok = false; const es3 = new EventSource(DB_URL + path);
-  const h = () => { ok = true; get(); };
-  es3.addEventListener("put", h); es3.addEventListener("patch", h);
-  es3.onerror = () => { if (!ok) { es3.close(); poll(); } };
-}
 function watchSpot() {
-  const get = async () => { try { const r = await fetch(DB_URL + "/spot.json", { cache: "no-store" }); if (r.ok) onSpot(await r.json()); } catch (_) {} };
-  const poll = () => { get(); setTimeout(poll, 3000); };
+  const get = async () => { try { const r = await fetch(DB_URL + "/spot/v.json", { cache: "no-store" }); if (r.ok) onSpot(await r.json()); } catch (_) {} };
+  const poll = () => { get(); setTimeout(poll, 2000); };
   if (!window.EventSource) return poll();
-  let ok = false; const es2 = new EventSource(DB_URL + "/spot.json");
+  let ok = false; const es2 = new EventSource(DB_URL + "/spot/v.json");
   const h = () => { ok = true; get(); };
   es2.addEventListener("put", h); es2.addEventListener("patch", h);
   es2.onerror = () => { if (!ok) { es2.close(); poll(); } };
 }
-$("#peekBtn").onclick = () => { setMod(false); setPeek(!peek); };
+$("#peekBtn").onclick = () => { setMod(false); $("#plist").hidden = true; setPeek(!peek); };
+$("#listBtn").onclick = () => { setMod(false); setPeek(false); $("#plist").hidden = false; renderList(); };
+$("#plClose").onclick = () => { $("#plist").hidden = true; };
 $("#pkX").onclick = closePeek;
 $("#peek").onclick = ev => { if (ev.target.id === "peek") closePeek(); };
 addEventListener("keydown", ev => { if (ev.key === "Escape") closePeek(); });
