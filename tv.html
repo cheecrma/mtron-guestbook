@@ -99,7 +99,6 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 #plGrid i{font-style:normal;color:var(--mus);font-size:11px}
 #plGrid p{grid-column:1/-1;color:var(--soft);font-size:13px;text-align:center;padding:20px 0}
 @media (max-width:700px),(max-height:500px){#plist{left:2vw;right:2vw;width:auto;top:auto;max-height:50vh}}
-#pkX{position:absolute;right:10px;top:8px;width:44px;height:44px;font-size:30px;line-height:1;color:var(--deep);opacity:.55}#pkX:hover{opacity:1}
 #login{position:fixed;inset:0;display:none;place-items:center;background:rgba(5,20,16,.7);z-index:40}#login.on{display:grid}#login form{background:var(--deep);border-radius:20px;padding:22px;display:grid;gap:10px;width:min(360px,90vw);box-shadow:0 20px 50px rgba(0,0,0,.5)}#login input{height:44px;border-radius:12px;border:0;padding:0 12px;font:16px "Gowun Dodum",sans-serif;background:#143a30;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}#login p{font-size:13px;color:var(--mus);min-height:18px}
 #banner{position:fixed;left:50%;bottom:8px;transform:translateX(-50%);background:var(--mus);color:var(--deep);font-size:12px;padding:5px 12px;border-radius:999px;z-index:30;display:none;white-space:nowrap}
 
@@ -219,7 +218,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 <div id="beam"></div>
 <div id="login"><form id="loginForm"><b>관리자 로그인</b><input id="lgEmail" type="email" autocomplete="username" placeholder="관리자 이메일"><input id="lgPw" type="password" autocomplete="current-password" placeholder="비밀번호"><p id="lgMsg"></p><div style="display:flex;gap:8px"><button class="btn" type="submit">로그인</button><button class="btn ghost" type="button" id="lgCancel">취소</button></div></form></div>
 <div id="plist" hidden><div class="plh"><b>그림 목록<small id="plHint"></small></b><button id="plClose" aria-label="목록 닫기">×</button></div><div id="plGrid"></div></div>
-<div id="peek"><div class="pk" role="dialog" aria-label="그림 자세히 보기"><button id="pkX" aria-label="닫기">×</button><div id="pkWin">🎉 당첨을 축하해요!</div><div id="pkArt"></div><div id="pkN"></div><div id="pkM"></div><div id="pkT"></div></div></div>
+<div id="peek"><div class="pk" role="dialog" aria-label="그림 자세히 보기"><div id="pkWin">🎉 당첨을 축하해요!</div><div id="pkArt"></div><div id="pkN"></div><div id="pkM"></div><div id="pkT"></div></div></div>
 <div id="modbar"><span>이 그림을 스크린에서 내릴까요?</span><button class="btn" id="modYes" style="min-height:40px">내리기</button><button class="btn ghost" id="modNo" style="min-height:40px">취소</button></div>
 
 <script src="qr.min.js"></script>
@@ -806,7 +805,6 @@ function watchSpot() {
 $("#peekBtn").onclick = () => { setMod(false); $("#plist").hidden = true; setPeek(!peek); };
 $("#listBtn").onclick = () => { setMod(false); setPeek(false); $("#plist").hidden = false; renderList(); };
 $("#plClose").onclick = () => { $("#plist").hidden = true; };
-$("#pkX").onclick = closePeek;
 $("#peek").onclick = ev => { if (ev.target.id === "peek") closePeek(); };
 addEventListener("keydown", ev => { if (ev.key === "Escape") closePeek(); });
 $("#modBtn").onclick = () => { setPeek(false); setMod(!mod); };
