@@ -241,7 +241,14 @@ function Snow(canvas, o) {
   const ctx = canvas.getContext("2d"); let w = 0, h = 0, fl = [];
   const mk = any => { const L = o.layers[Math.random() * o.layers.length | 0]; return { L, x: Math.random() * w, y: any ? Math.random() * h : -20, r: rnd(L.r[0], L.r[1]), v: rnd(L.v[0], L.v[1]), ph: rnd(0, 6.3), sw: rnd(6, 26), sp: rnd(.3, 1) }; };
   return {
-    resize() { const d = Math.min(1.5, devicePixelRatio || 1), r = canvas.getBoundingClientRect(); w = r.width; h = r.height; canvas.width = Math.max(1, w * d | 0); canvas.height = Math.max(1, h * d | 0); ctx.setTransform(d, 0, 0, d, 0, 0); fl = Array.from({ length: Math.round(w * h / 10000 * o.density) }, () => mk(true)); },
+    resize() {
+      const d = Math.min(1.5, devicePixelRatio || 1), r = canvas.getBoundingClientRect();
+      if (fl.length && r.width === w && r.height === h && canvas.width === Math.max(1, w * d | 0)) return; /* 크기 그대로면 눈송이 유지 */
+      const ow = w, oh = h; w = r.width; h = r.height; canvas.width = Math.max(1, w * d | 0); canvas.height = Math.max(1, h * d | 0); ctx.setTransform(d, 0, 0, d, 0, 0);
+      if (ow && oh) for (const f of fl) { f.x *= w / ow; f.y *= h / oh; } /* 크기가 바뀌어도 기존 눈송이는 비율대로 옮겨 이어지게 */
+      const n = Math.round(w * h / 10000 * o.density);
+      if (fl.length > n) fl.length = n; while (fl.length < n) fl.push(mk(true));
+    },
     step(dt) {
       ctx.clearRect(0, 0, w, h);
       for (const f of fl) {
@@ -262,6 +269,7 @@ function Fx(canvas, clear) {
     fit() { const d = Math.min(1.5, devicePixelRatio || 1), r = canvas.getBoundingClientRect(); canvas.width = Math.max(1, r.width * d | 0); canvas.height = Math.max(1, r.height * d | 0); ctx.setTransform(d, 0, 0, d, 0, 0); },
     burst(x, y, r, n) { for (let i = 0; i < n; i++) { const a = rnd(0, 6.283), s = rnd(.35, 1) * Math.max(160, r * 3); ps.push({ x: x + Math.cos(a) * r * .35, y: y + Math.sin(a) * r * .35, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, g: 220, life: 0, max: rnd(.8, 1.5), c: pick(COLS), r: rnd(2.5, 6) * Math.max(1, r / 160), k: Math.random() < .45 ? "star" : "dot" }); } },
     ring(x, y, r) { ps.push({ k: "ring", x, y, r0: r, life: 0, max: 1 }); ps.push({ k: "ring", x, y, r0: r * .7, life: -.14, max: 1 }); },
+    gather(x, y, R, n) { for (let i = 0; i < n; i++) { const a = rnd(0, 6.283), d = R * rnd(.55, 1); ps.push({ k: "in", sx: x + Math.cos(a) * d, sy: y + Math.sin(a) * d, tx: x, ty: y, x, y, life: 0, max: rnd(.7, 1.1), c: pick(COLS), r: rnd(2, 4.2) * Math.max(1, R / 300), sh: Math.random() < .5 }); } },
     trail(x, y, n, up) { for (let i = 0; i < n; i++) ps.push({ x: x + rnd(-10, 10), y: y + rnd(-6, 6), vx: rnd(-24, 24), vy: up ? rnd(30, 90) : rnd(-60, -20), g: up ? 40 : -10, life: 0, max: rnd(.5, 1), c: pick(COLS), r: rnd(1.5, 3.6), k: Math.random() < .35 ? "star" : "dot" }); },
     step(dt) {
       if (clear) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.restore(); }
@@ -270,6 +278,13 @@ function Fx(canvas, clear) {
       ps = ps.filter(p => {
         p.life += dt; if (p.life < 0) return true; const t = p.life / p.max; if (t >= 1) return false;
         if (p.k === "ring") { ctx.globalAlpha = (1 - t) * .75; ctx.strokeStyle = "#fbf3e2"; ctx.lineWidth = Math.max(.5, 7 * (1 - t)); ctx.beginPath(); ctx.arc(p.x, p.y, p.r0 * (1 + 2.6 * (1 - (1 - t) ** 2)), 0, 7); ctx.stroke(); return true; }
+        if (p.k === "in") {
+          const e = t * t * t, s = 1 - e; p.x = p.tx + (p.sx - p.tx) * s; p.y = p.ty + (p.sy - p.ty) * s;
+          ctx.globalAlpha = Math.min(1, t * 3) * (1 - e * .7); ctx.fillStyle = p.c; const q = p.r * (1 - e * .5);
+          if (p.sh) { const s2 = q * 2.2; ctx.beginPath(); ctx.moveTo(p.x, p.y - s2); ctx.quadraticCurveTo(p.x, p.y, p.x + s2, p.y); ctx.quadraticCurveTo(p.x, p.y, p.x, p.y + s2); ctx.quadraticCurveTo(p.x, p.y, p.x - s2, p.y); ctx.quadraticCurveTo(p.x, p.y, p.x, p.y - s2); ctx.fill(); }
+          else { ctx.beginPath(); ctx.arc(p.x, p.y, q, 0, 7); ctx.fill(); }
+          return true;
+        }
         p.vy += p.g * dt; const dr = Math.exp(-1.6 * dt); p.vx *= dr; p.vy *= dr; p.x += p.vx * dt; p.y += p.vy * dt;
         ctx.globalAlpha = 1 - t; ctx.fillStyle = p.c;
         if (p.k === "star") { const s = p.r * 2.2 * (1 - t * .5); ctx.beginPath(); ctx.moveTo(p.x, p.y - s); ctx.quadraticCurveTo(p.x, p.y, p.x + s, p.y); ctx.quadraticCurveTo(p.x, p.y, p.x, p.y + s); ctx.quadraticCurveTo(p.x, p.y, p.x - s, p.y); ctx.quadraticCurveTo(p.x, p.y, p.x, p.y - s); ctx.fill(); }
@@ -377,9 +392,10 @@ function buildGarland() {
   g.insertAdjacentHTML("beforeend", out);
 }
 const active = () => [...live.values()].filter(o => o.state !== "leaving");
+let lastWH = "";
 function resizeWall() {
   W = wall.clientWidth; H = wall.clientHeight; if (!W || !H) return;
-  back.resize(); front.resize(); buildGarland();
+  if (lastWH !== W + "x" + H) { lastWH = W + "x" + H; back.resize(); front.resize(); buildGarland(); } /* 새 그림이 들어와도 눈과 전구는 끊기지 않게 */
   const wr = wall.getBoundingClientRect(), rel = (el, m) => { const r = el.getBoundingClientRect(); return { x1: r.left - wr.left - m, y1: r.top - wr.top - m, x2: r.right - wr.left + m, y2: r.bottom - wr.top + m }; };
   const hd = rel($("#whead"), 16); hd.y1 = -999; hb = hd.y2;
   obs = [hd, rel($(".qr"), 14), rel($(".count"), 10)];
@@ -452,22 +468,30 @@ function push(x, y, B) {
 }
 async function drop(o, busy) {
   const B = Math.round(Math.min(520, Math.min(W * .5, (H - hb) * .62)));
-  setCanvas(o, B); o.el.classList.remove("pending"); o.el.style.opacity = 1;
-  o.state = "drop"; o.x = W / 2; o.y = -B * .7; o.k = .5; o.sx = o.sy = 1; o.rot = rnd(-25, 25); o.hold = false; place(o);
-  updStat();
-  await anim(820, p => {
-    const e = p * p * (1.6 - .6 * p);
-    o.y = -B * .7 + (cy + B * .7) * e; o.k = .5 + .5 * p; o.sy = 1 + .2 * Math.sin(p * Math.PI * .9); o.sx = 1 - .08 * Math.sin(p * Math.PI * .9); o.rot *= .95; place(o);
-    fx.trail(o.x + rnd(-B * .15, B * .15), o.y - B * o.k * .42, 2, false);
+  setCanvas(o, B); o.el.classList.remove("pending");
+  o.state = "drop"; o.x = W / 2; o.y = cy; o.k = .001; o.sx = o.sy = 1; o.rot = 0; o.hold = false; place(o);
+  o.el.style.transition = "none"; o.el.style.opacity = 0; updStat();
+  /* 1) 천천히: 반짝이가 가운데로 모이고, 작은 씨앗이 빛나며 자라남 */
+  let acc = 0;
+  await anim(1700, p => {
+    acc += 1; if (acc % 3 === 0 && p < .85) fx.gather(o.x, o.y, B * (1.1 - p * .4), 3);
+    const e = 1 - (1 - p) ** 3;
+    o.el.style.opacity = Math.min(1, p * 1.6); o.k = .02 + .16 * e; o.rot = Math.sin(p * Math.PI * 4) * 10 * p;
+    o.sx = o.sy = 1 + Math.sin(p * Math.PI * 9) * .05 * p; place(o);
   });
-  o.rot = 0;
-  fx.ring(o.x, cy, B * .42); fx.burst(o.x, cy, B * .4, 70); push(o.x, cy, B);
-  if (!reduce) field.animate([{ transform: "translateY(0)" }, { transform: "translateY(7px)" }, { transform: "translateY(-3px)" }, { transform: "none" }], { duration: 340 });
-  await anim(620, p => {
+  /* 2) 살짝 움츠림(예비 동작) */
+  await anim(220, p => { const e = p * p; o.k = .18 - .07 * e; o.sx = 1 + .18 * e; o.sy = 1 - .18 * e; o.rot *= .8; place(o); });
+  /* 3) 뿅! 탄성 있게 튀어나옴 */
+  o.rot = 0; o.el.style.opacity = 1;
+  fx.ring(o.x, cy, B * .42); fx.burst(o.x, cy, B * .4, 80); push(o.x, cy, B);
+  if (!reduce) field.animate([{ transform: "scale(1)" }, { transform: "scale(1.012)" }, { transform: "none" }], { duration: 380, easing: "ease-out" });
+  await anim(900, p => {
+    const e = 1 - Math.exp(-6 * p) * Math.cos(p * Math.PI * 3.2);
+    o.k = .11 + .89 * e;
     const s = Math.sin(p * Math.PI * 3) * Math.exp(-p * 4.4);
-    o.sx = 1 + .3 * s; o.sy = 1 - .3 * s; o.y = cy - Math.abs(Math.sin(p * Math.PI * 2)) * Math.exp(-p * 5) * B * .14; place(o);
+    o.sx = 1 - .22 * s; o.sy = 1 + .22 * s; place(o);
   });
-  o.sx = o.sy = 1; o.y = cy; place(o);
+  o.k = 1; o.sx = o.sy = 1; o.y = cy; place(o); o.el.style.transition = "";
   const cap = $("#cap");
   cap.querySelector("b").textContent = o.it.n ? String(o.it.n).slice(0, 12) : "익명의 산타";
   cap.querySelector("span").textContent = o.it.m ? String(o.it.m).slice(0, 40) : "";
@@ -476,7 +500,7 @@ async function drop(o, busy) {
   cap.classList.remove("on");
   const S = size || 140, [tx, ty] = pickSpot(S / 2), x0 = o.x, y0 = o.y, r0 = o.rot;
   fx.burst(o.x, o.y, B * .2, 18);
-  await anim(950, p => { const e = p < .5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2; o.k = 1 - (1 - S / B) * e; o.x = x0 + (tx - x0) * e; o.y = y0 + (ty - y0) * e; o.rot = r0 + (o.r0 - r0) * e; place(o); });
+  await anim(1500, p => { const e = p < .5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2; o.k = 1 - (1 - S / B) * e; o.x = x0 + (tx - x0) * e; o.y = y0 + (ty - y0) * e; o.rot = r0 + (o.r0 - r0) * e; place(o); });
   o.state = "live"; o.rot = o.rot - o.r0; o.k = 1; setCanvas(o, S); const a = rnd(0, 6.28); o.vx = Math.cos(a) * 12; o.vy = Math.sin(a) * 12; place(o);
 }
 async function play() {
