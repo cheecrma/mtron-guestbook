@@ -70,6 +70,10 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 @media (max-width:700px){.wbar{left:2vw;right:2vw;flex-wrap:wrap;justify-content:flex-end;gap:6px}.wbar .btn{min-height:36px;font-size:13px;padding:0 12px}#whead .mc{font-size:min(clamp(44px,8.6vh,150px),13vw)}}
 #modbar{position:fixed;left:50%;bottom:4vh;transform:translateX(-50%);background:var(--deep);border-radius:999px;padding:8px 8px 8px 20px;display:none;gap:8px;align-items:center;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #modbar.on{display:flex}
+.lite .it canvas,.lite #pkArt canvas{filter:none}
+.lite .mc{animation:none;filter:none;background-position:30% 0}
+.lite .qr,.lite #cap,.lite #peek,.lite #plist{backdrop-filter:none;-webkit-backdrop-filter:none}
+.lite #peek{background:rgba(5,20,16,.82)}
 .adm .wbar{opacity:.55}
 .peek .it{cursor:zoom-in}.peek .it:hover canvas{outline:2px dashed var(--gold);outline-offset:4px}
 #peek{position:fixed;inset:0;display:none;place-items:center;background:rgba(5,20,16,.6);backdrop-filter:blur(4px);z-index:35}
@@ -224,7 +228,11 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 <script src="qr.min.js"></script>
 <script>
 {
-const MAX_WALL = 45, KEEP_PER_PERSON = 5;
+const QS = new URLSearchParams(location.search);
+const LITE = QS.get("lite") === "1" || (QS.get("lite") !== "0" && /SMART-TV|SmartTV|Tizen|Web0S|webOS|NetCast|HbbTV|BRAVIA|VIDAA|Hisense|NETTV|AFT[A-Z]|Android TV|GoogleTV|CrKey/i.test(navigator.userAgent));
+if (LITE) document.documentElement.classList.add("lite");
+const DPR = (max) => LITE ? 1 : Math.min(max, devicePixelRatio || 1);
+const MAX_WALL = LITE ? 32 : 45, KEEP_PER_PERSON = 5;
 const $ = s => document.querySelector(s);
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[Math.random() * a.length | 0];
@@ -266,19 +274,20 @@ function paint(ctx, e, px) {
   ctx.restore();
 }
 function cv(e, css) {
-  const c = document.createElement("canvas"), dpr = Math.min(2, devicePixelRatio || 1);
+  const c = document.createElement("canvas"), dpr = DPR(2);
   c.width = c.height = Math.round(css * dpr); c.style.width = c.style.height = css + "px";
   paint(c.getContext("2d"), e, c.width); return c;
 }
 
 
 /* ---------- effects ---------- */
+const FLAKE = (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const x = c.getContext("2d"), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, "rgba(255,255,255,.95)"); g.addColorStop(1, "rgba(255,255,255,0)"); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return c; })();
 function Snow(canvas, o) {
   const ctx = canvas.getContext("2d"); let w = 0, h = 0, fl = [];
   const mk = any => { const L = o.layers[Math.random() * o.layers.length | 0]; return { L, x: Math.random() * w, y: any ? Math.random() * h : -20, r: rnd(L.r[0], L.r[1]), v: rnd(L.v[0], L.v[1]), ph: rnd(0, 6.3), sw: rnd(6, 26), sp: rnd(.3, 1) }; };
   return {
     resize() {
-      const d = Math.min(1.5, devicePixelRatio || 1), r = canvas.getBoundingClientRect();
+      const d = DPR(1.5), r = canvas.getBoundingClientRect();
       if (fl.length && r.width === w && r.height === h && canvas.width === Math.max(1, w * d | 0)) return; /* 크기 그대로면 눈송이 유지 */
       const ow = w, oh = h; w = r.width; h = r.height; canvas.width = Math.max(1, w * d | 0); canvas.height = Math.max(1, h * d | 0); ctx.setTransform(d, 0, 0, d, 0, 0);
       if (ow && oh) for (const f of fl) { f.x *= w / ow; f.y *= h / oh; } /* 크기가 바뀌어도 기존 눈송이는 비율대로 옮겨 이어지게 */
@@ -290,9 +299,9 @@ function Snow(canvas, o) {
       for (const f of fl) {
         f.y += f.v * dt * (reduce ? .3 : 1); f.ph += dt * f.sp; if (f.y > h + 24) Object.assign(f, mk(false));
         const x = f.x + Math.sin(f.ph) * f.sw; ctx.globalAlpha = f.L.a;
-        if (f.L.blur) { const g = ctx.createRadialGradient(x, f.y, 0, x, f.y, f.r); g.addColorStop(0, "rgba(255,255,255,.95)"); g.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = g; }
-        else ctx.fillStyle = "#fff";
-        ctx.beginPath(); ctx.arc(x, f.y, f.r, 0, 7); ctx.fill();
+        if (f.L.blur) { ctx.drawImage(FLAKE, x - f.r, f.y - f.r, f.r * 2, f.r * 2); continue; }
+        ctx.fillStyle = "#fff";
+        if (f.r < 1.6) ctx.fillRect(x - f.r, f.y - f.r, f.r * 2, f.r * 2); else { ctx.beginPath(); ctx.arc(x, f.y, f.r, 0, 7); ctx.fill(); }
       }
       ctx.globalAlpha = 1;
     }
@@ -302,8 +311,8 @@ function Fx(canvas, clear) {
   const ctx = canvas.getContext("2d"); let ps = [];
   const COLS = ["#f6dc9a", "#fbf3e2", "#e88aa0", "#e2b24a", "#9bbf95", "#ff8a8a"];
   return {
-    fit() { const d = Math.min(1.5, devicePixelRatio || 1), r = canvas.getBoundingClientRect(); canvas.width = Math.max(1, r.width * d | 0); canvas.height = Math.max(1, r.height * d | 0); ctx.setTransform(d, 0, 0, d, 0, 0); },
-    burst(x, y, r, n) { for (let i = 0; i < n; i++) { const a = rnd(0, 6.283), s = rnd(.35, 1) * Math.max(160, r * 3); ps.push({ x: x + Math.cos(a) * r * .35, y: y + Math.sin(a) * r * .35, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, g: 220, life: 0, max: rnd(.8, 1.5), c: pick(COLS), r: rnd(2.5, 6) * Math.max(1, r / 160), k: Math.random() < .45 ? "star" : "dot" }); } },
+    fit() { const d = DPR(1.5), r = canvas.getBoundingClientRect(); canvas.width = Math.max(1, r.width * d | 0); canvas.height = Math.max(1, r.height * d | 0); ctx.setTransform(d, 0, 0, d, 0, 0); },
+    burst(x, y, r, n) { if (LITE) n = Math.ceil(n / 2); for (let i = 0; i < n; i++) { const a = rnd(0, 6.283), s = rnd(.35, 1) * Math.max(160, r * 3); ps.push({ x: x + Math.cos(a) * r * .35, y: y + Math.sin(a) * r * .35, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, g: 220, life: 0, max: rnd(.8, 1.5), c: pick(COLS), r: rnd(2.5, 6) * Math.max(1, r / 160), k: Math.random() < .45 ? "star" : "dot" }); } },
     ring(x, y, r) { ps.push({ k: "ring", x, y, r0: r, life: 0, max: 1 }); ps.push({ k: "ring", x, y, r0: r * .7, life: -.14, max: 1 }); },
     gather(x, y, R, n) { for (let i = 0; i < n; i++) { const a = rnd(0, 6.283), d = R * rnd(.55, 1); ps.push({ k: "in", sx: x + Math.cos(a) * d, sy: y + Math.sin(a) * d, tx: x, ty: y, x, y, life: 0, max: rnd(.7, 1.1), c: pick(COLS), r: rnd(2, 4.2) * Math.max(1, R / 300), sh: Math.random() < .5 }); } },
     trail(x, y, n, up) { for (let i = 0; i < n; i++) ps.push({ x: x + rnd(-10, 10), y: y + rnd(-6, 6), vx: rnd(-24, 24), vy: up ? rnd(30, 90) : rnd(-60, -20), g: up ? 40 : -10, life: 0, max: rnd(.5, 1), c: pick(COLS), r: rnd(1.5, 3.6), k: Math.random() < .35 ? "star" : "dot" }); },
@@ -410,8 +419,8 @@ $("#again").onclick = () => { st.strokes = []; $("#done").hidden = true; $("#dra
 /* ---------- wall ---------- */
 const wall = $("#wall"), field = $("#field"), live = new Map(), seen = new Set();
 let first = true, started = false, queue = [], playing = false, mod = false, modTarget = null, size = 0, W = 0, H = 0, hb = 0, cy = 0, obs = [], testN = 0;
-const back = Snow($("#snowBack"), { density: 1.1, layers: [{ r: [.6, 1.3], v: [12, 24], a: .5 }, { r: [1.3, 2.3], v: [22, 38], a: .75 }] });
-const front = Snow($("#fx"), { density: .05, layers: [{ r: [6, 13], v: [46, 76], a: .45, blur: true }] });
+const back = Snow($("#snowBack"), { density: LITE ? .55 : 1.1, layers: [{ r: [.6, 1.3], v: [12, 24], a: .5 }, { r: [1.3, 2.3], v: [22, 38], a: .75 }] });
+const front = Snow($("#fx"), { density: LITE ? .02 : .05, layers: [{ r: [6, 13], v: [46, 76], a: .45, blur: true }] });
 const fx = Fx($("#fx"), false);
 const BULBS = ["#ff6b7a", "#ffd36b", "#9ee6a8", "#ff9ec4", "#fff1c9"];
 function buildGarland() {
@@ -676,8 +685,22 @@ function drawQr() {
   if (!window.QRLib) return;
   window.QRLib.toString(target, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#0d2a22", light: "#fbf3e2" } }, (err, svg) => { if (!err && svg.startsWith("<svg")) $("#qrBox").innerHTML = svg; });
 }
+/* ---------- 화면 꺼짐 방지 (TV 화면 보호기, 절전) ---------- */
+function keepAwake() {
+  let lock = null;
+  const req = async () => { try { if ("wakeLock" in navigator && document.visibilityState === "visible" && !lock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => { lock = null; }); } } catch (_) {} };
+  req(); document.addEventListener("visibilitychange", req); setInterval(req, 60000);
+  const v = document.createElement("video");
+  v.muted = true; v.loop = true; v.playsInline = true; v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("aria-hidden", "true");
+  v.style.cssText = "position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:0";
+  v.innerHTML = '<source src="keepawake.mp4" type="video/mp4"><source src="keepawake.webm" type="video/webm">';
+  document.body.appendChild(v);
+  const play = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+  play(); setInterval(() => { if (v.paused) play(); }, 15000);
+  addEventListener("pointerdown", play, { once: true }); addEventListener("keydown", play, { once: true });
+}
 function startWall() {
-  if (started) return; started = true; drawQr();
+  if (started) return; started = true; drawQr(); keepAwake();
   if (ADMIN_MODE) { $("#loginBtn").hidden = false; $("#peekBtn").hidden = false; $("#rafBtn").hidden = false; $("#listBtn").hidden = false; $("#testBtn").hidden = true; document.body.classList.add("adm"); }
   stream(); watchSpot(); setTimeout(prune, 5000);
 }
@@ -831,8 +854,11 @@ addEventListener("hashchange", route);
 let rz = 0; const ro = new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(() => view === "wall" ? resizeWall() : resizeDraw(), 120); });
 ro.observe(document.documentElement);
 let lt = 0;
+/* ?fps=1 : 화면 왼쪽 아래에 초당 프레임 수 표시(점검용) */
+const FPS = QS.has("fps") ? (() => { const el = document.createElement("div"); el.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:99;font:12px monospace;color:#fff;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px"; document.body.appendChild(el); let n = 0, t0 = 0; return t => { n++; if (!t0) t0 = t; if (t - t0 >= 1000) { el.textContent = Math.round(n * 1000 / (t - t0)) + " fps" + (LITE ? " · lite" : ""); n = 0; t0 = t; } }; })() : null;
 function loop(t) {
-  const dt = Math.min(.05, (t - (lt || t)) / 1000); lt = t;
+  if (LITE && lt && t - lt < 30) { requestAnimationFrame(loop); return; }
+  const dt = Math.min(.05, (t - (lt || t)) / 1000); lt = t; if (FPS) FPS(t);
   if (view === "wall" && W) { back.step(dt); front.step(dt); fx.step(dt); physics(dt); }
   else if (view === "draw") { snowP.step(dt); pfx.step(dt); }
   requestAnimationFrame(loop);
